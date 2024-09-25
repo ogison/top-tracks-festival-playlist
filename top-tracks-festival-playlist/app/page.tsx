@@ -1,6 +1,10 @@
 'use client';
 import { useState } from 'react';
 import axios from 'axios';
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 interface Track {
   id: string;
@@ -9,41 +13,77 @@ interface Track {
 }
 
 export default function Home() {
+  const [artistName, setArtistName] = useState<string>('');
   const [artistId, setArtistId] = useState<string>('');
   const [topTracks, setTopTracks] = useState<Track[]>([]);
   const [error, setError] = useState<string>('');
 
   const fetchTopTracks = async () => {
     try {
-      const response = await axios.get('/api/top-tracks', {
-        params: { artistId },
+      const response = await axios.get('/api/get-artistid', {
+        params: { artistName },
       });
-      setTopTracks(response.data);
+      await setArtistId(response.data.artistId);
     } catch (error:any) {
+      setError('Failed to retrieve access token')
       throw new Error('Failed to retrieve access token');
+    }
+
+    if(artistId){
+      try {
+        const response = await axios.get('/api/top-tracks', {
+          params: { artistId },
+        });
+        await setTopTracks(response.data);
+      } catch (error:any) {
+        setError('Failed to retrieve access token')
+        throw new Error('Failed to retrieve access token');
+      }
     }
   };
 
   return (
-    <div>
-      <h1>Spotify Top 10 Tracks</h1>
-      <input
-        type="text"
-        placeholder="Enter Artist ID"
-        value={artistId}
-        onChange={(e) => setArtistId(e.target.value)}
-      />
-      <button onClick={fetchTopTracks}>Get Top Tracks</button>
-
-      {error && <p>{error}</p>}
-
-      <ul>
-        {topTracks.map((track) => (
-          <li key={track.id}>
-            {track.name} - {track.artists[0].name}
-          </li>
-        ))}
-      </ul>
+    <div className="container mx-auto p-4">
+      <Card>
+        <CardHeader>
+          <CardTitle>Spotify Playlist Creator</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex space-x-2 mb-4">
+            <Input
+              type="text"
+              placeholder="Enter artist name"
+              value={artistName}
+              onChange={(e) => setArtistName(e.target.value)}
+            />
+            <Button onClick={fetchTopTracks}>Get Top Tracks</Button>
+          </div>
+          {error && <p>{error}</p>}
+          {topTracks.length > 0 && (
+            <div className="mt-4 overflow-x-auto">
+              <h3 className="text-lg font-semibold mb-2">Playlist:</h3>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[100px]">#</TableHead>
+                    <TableHead>Artist</TableHead>
+                    <TableHead>Song</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {topTracks.map((song, index) => (
+                    <TableRow key={index} className={index % 2 === 0 ? 'bg-muted/50' : ''}>
+                      <TableCell className="font-medium">{index + 1}</TableCell>
+                      <TableCell>{song.name}</TableCell>
+                      <TableCell>{song.artists[0].name}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
