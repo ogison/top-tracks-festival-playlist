@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import Loading from '@/components/loading';
 
 interface Track {
   id: string;
@@ -18,27 +19,28 @@ export default function Home() {
   const [topTracks, setTopTracks] = useState<Track[]>([]);
   const [error, setError] = useState<string>('');
 
+  //　ローディングの状態を管理
+  const [loading, setLoading] = useState<boolean>(false);
+
   const fetchTopTracks = async () => {
-    try {
-      const response = await axios.get('/api/get-artistid', {
+    setLoading(true)
+    setError('')
+    try{
+      const response1 = await axios.get('/api/get-artistid', {
         params: { artistName },
       });
-      await setArtistId(response.data.artistId);
+      const artistId = response1.data.artistId
+      if (artistId){
+        const response2 = await axios.get('/api/top-tracks', {
+          params: {artistId },
+        });
+        await setTopTracks(response2.data);
+      }
     } catch (error:any) {
       setError('Failed to retrieve access token')
       throw new Error('Failed to retrieve access token');
-    }
-
-    if(artistId){
-      try {
-        const response = await axios.get('/api/top-tracks', {
-          params: { artistId },
-        });
-        await setTopTracks(response.data);
-      } catch (error:any) {
-        setError('Failed to retrieve access token')
-        throw new Error('Failed to retrieve access token');
-      }
+    } finally{
+      setLoading(false)
     }
   };
 
@@ -59,29 +61,32 @@ export default function Home() {
             <Button onClick={fetchTopTracks}>Get Top Tracks</Button>
           </div>
           {error && <p>{error}</p>}
-          {topTracks.length > 0 && (
-            <div className="mt-4 overflow-x-auto">
-              <h3 className="text-lg font-semibold mb-2">Playlist:</h3>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[100px]">#</TableHead>
-                    <TableHead>Artist</TableHead>
-                    <TableHead>Song</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {topTracks.map((song, index) => (
-                    <TableRow key={index} className={index % 2 === 0 ? 'bg-muted/50' : ''}>
-                      <TableCell className="font-medium">{index + 1}</TableCell>
-                      <TableCell>{song.name}</TableCell>
-                      <TableCell>{song.artists[0].name}</TableCell>
+          {
+            loading ? <Loading /> :
+            (topTracks.length > 0 && (
+              <div className="mt-4 overflow-x-auto">
+                <h3 className="text-lg font-semibold mb-2">Playlist:</h3>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[100px]">#</TableHead>
+                      <TableHead>Artist</TableHead>
+                      <TableHead>Song</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
+                  </TableHeader>
+                  <TableBody>
+                    {topTracks.map((song, index) => (
+                      <TableRow key={index} className={index % 2 === 0 ? 'bg-muted/50' : ''}>
+                        <TableCell className="font-medium">{index + 1}</TableCell>
+                        <TableCell>{song.name}</TableCell>
+                        <TableCell>{song.artists[0].name}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            ))
+          }
         </CardContent>
       </Card>
     </div>
