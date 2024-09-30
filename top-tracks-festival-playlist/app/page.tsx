@@ -1,11 +1,12 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import Loading from '@/components/loading';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 interface Track {
   id: string;
@@ -22,6 +23,9 @@ export default function Home() {
   //　ローディングの状態を管理
   const [loading, setLoading] = useState<boolean>(false);
 
+  // ダイアログ表示を管理
+  const [isErrorDialogOpen, setIsErrorDialogOpen] = useState<boolean>(false);
+
   const fetchTopTracks = async () => {
     setLoading(true)
     setError('')
@@ -37,12 +41,16 @@ export default function Home() {
         await setTopTracks(response2.data);
       }
     } catch (error:any) {
-      setError('Failed to retrieve access token')
-      throw new Error('Failed to retrieve access token');
+      setIsErrorDialogOpen(true); 
     } finally{
       setLoading(false)
     }
   };
+
+  useEffect(() =>{
+    console.log(isErrorDialogOpen);
+    
+  }, [isErrorDialogOpen]);
 
   return (
     <div className="container mx-auto p-4">
@@ -60,7 +68,6 @@ export default function Home() {
             />
             <Button onClick={fetchTopTracks}>Get Top Tracks</Button>
           </div>
-          {error && <p>{error}</p>}
           {
             loading ? <Loading /> :
             (topTracks.length > 0 && (
@@ -87,6 +94,25 @@ export default function Home() {
               </div>
             ))
           }
+          <Dialog open={isErrorDialogOpen} onClose={() => setIsErrorDialogOpen(false)}>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>認証エラー</DialogTitle>
+                <DialogDescription>
+                  値を入力してください
+                </DialogDescription>
+              </DialogHeader>
+            
+              <DialogFooter className="sm:justify-end">
+                <DialogClose asChild>
+                  <Button type="button" variant="secondary" onClick={() => setIsErrorDialogOpen(false)}>
+                    Close
+                  </Button>
+                </DialogClose>
+              </DialogFooter>
+              
+            </DialogContent>
+          </Dialog>
         </CardContent>
       </Card>
     </div>
