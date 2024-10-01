@@ -22,16 +22,17 @@ export async function GET(req: NextRequest) {
       params: {
         q: artistName, // クエリパラメータはparamsで指定
         type: "artist",
-        market: "US", // 市場を指定
+        market: "JP", // 市場を指定
         limit: 5,
       },
     });
 
+    console.log("rrr", response);
     const data = response.data; // Axiosは自動でレスポンスをJSONにパースするため、`.json()`は不要
 
     if (data.artists.items.length > 0) {
       return NextResponse.json(
-        { artistId: data.artists.items[0].id },
+        { artists: data.artists.items },
         { status: 200 }
       ); // IDをレスポンスとして返す
     } else {
