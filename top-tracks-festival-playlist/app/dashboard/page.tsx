@@ -34,7 +34,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { artist_item } from "@/types";
-import getAccessToken from "@/lib/spotify";
+import { useSearchParams } from "next/navigation";
 
 interface Track {
   id: string;
@@ -49,10 +49,10 @@ const schema = z.object({
     .min(1, { message: "アーティスト名は1文字以上入れてください" }), // 必須チェック
 });
 
-const clientId = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID ?? "";
-const userId = process.env.NEXT_PUBLIC_SPOTIFY_USER_ID ?? "";
-
 export default function Home() {
+  const searchParams = useSearchParams();
+  const access_token = searchParams.get("access_token");
+
   const [artistId, setArtistId] = useState<string>("");
   const [topTracks, setTopTracks] = useState<Track[]>([]);
   const [error, setError] = useState<string>("");
@@ -108,25 +108,10 @@ export default function Home() {
   const makePlaylist = async () => {
     setError("");
     try {
-      const userResponse = await axios.get("/api/get-userid");
-      console.log(userResponse.data.userData);
-      const response = await axios.post("/api/make-playlist", {
+      await axios.post("/api/make-playlist", {
         playlistName: playlistName,
+        access_token: access_token,
       });
-
-      // const response = await axios.post(
-      //   `https://api.spotify.com/v1/users/${userId}/playlists`,
-      //   {
-      //     name: playlistName, // クエリパラメータはparamsで指定
-      //     public: false, // プレイリストは非公開
-      //   },
-      //   {
-      //     headers: {
-      //       Authorization: `Bearer ${accessToken}`,
-      //       "Content-Type": "application/json",
-      //     },
-      //   }
-      // );
     } catch (error: any) {
       setIsErrorDialogOpen(true);
     }

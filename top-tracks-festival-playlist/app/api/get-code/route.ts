@@ -33,9 +33,12 @@ export async function GET(req: NextRequest) {
 
     const accessToken = response.data.access_token;
     return NextResponse.json({ accessToken });
-  } catch (error) {
+  } catch (error: any) {
     return NextResponse.json(
-      { error: "Failed to retrieve access token", details: error.message },
+      {
+        error: "Failed to retrieve access token",
+        details: error.response?.data || error.message,
+      },
       { status: 500 }
     );
   }

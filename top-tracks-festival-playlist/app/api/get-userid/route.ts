@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
-import getAccessToken from "../../../lib/spotify";
 
 export async function GET(req: NextRequest) {
+  // リクエストボディからデータを取得
+  const { searchParams } = new URL(req.url);
+  const accessToken = searchParams.get("access_token");
+
   try {
-    const accessToken = await getAccessToken();
     const response = await axios.get(`https://api.spotify.com/v1/me`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,

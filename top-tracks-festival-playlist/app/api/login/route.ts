@@ -1,51 +1,14 @@
-import { NextRequest, NextResponse } from "next/server";
-import axios from "axios";
+import { NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const code = searchParams.get("code");
-
-  const redirectUri = process.env.NEXT_PUBLIC_SPOTIFY_REDIRECT_URI!;
+export async function GET() {
   const clientId = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID!;
-  const clientSecret = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET!;
+  const redirectUri = process.env.NEXT_PUBLIC_SPOTIFY_REDIRECT_URI!;
+  const scope =
+    "user-read-private user-read-email playlist-modify-private playlist-modify-public"; // 必要なスコープを指定
 
-  if (!code) {
-    return NextResponse.json(
-      { error: "Authorization code is missing" },
-      { status: 400 }
-    );
-  }
+  const spotifyAuthUrl = `https://accounts.spotify.com/authorize?response_type=code&client_id=${clientId}&scope=${encodeURIComponent(
+    scope
+  )}&redirect_uri=${encodeURIComponent(redirectUri)}`;
 
-  try {
-    const response = await axios.post(
-      "https://accounts.spotify.com/api/token",
-      new URLSearchParams({
-        grant_type: "authorization_code",
-        code,
-        redirect_uri: redirectUri,
-        client_id: clientId,
-        client_secret: clientSecret,
-      }),
-      {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      }
-    );
-
-    const { access_token, refresh_token, expires_in } = response.data;
-
-    // トークンをセッションやデータベースに保存する処理を実装可能
-    // ここでは、クエリパラメータに付けてリダイレクトする例を示します
-    return NextResponse.redirect(`/dashboard?access_token=${access_token}`);
-  } catch (error: any) {
-    console.error(
-      "Spotify authentication error:",
-      error.response?.data || error.message
-    );
-    return NextResponse.json(
-      { error: "Failed to authenticate with Spotify" },
-      { status: 500 }
-    );
-  }
+  return NextResponse.redirect(spotifyAuthUrl);
 }
