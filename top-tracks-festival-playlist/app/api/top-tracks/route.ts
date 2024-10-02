@@ -1,13 +1,16 @@
-import { NextRequest, NextResponse } from 'next/server';
-import axios from 'axios';
-import getAccessToken from '../../../lib/spotify';
+import { NextRequest, NextResponse } from "next/server";
+import axios from "axios";
+import getAccessToken from "../../../lib/spotify";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const artistId = searchParams.get('artistId');
+  const artistId = searchParams.get("artistId");
 
   if (!artistId) {
-    return NextResponse.json({ error: 'Artist ID is required' }, { status: 400 });
+    return NextResponse.json(
+      { error: "Artist ID is required" },
+      { status: 400 }
+    );
   }
 
   try {
@@ -19,14 +22,17 @@ export async function GET(req: NextRequest) {
           Authorization: `Bearer ${accessToken}`,
         },
         params: {
-          market: 'US', // 市場を指定
+          market: "JP", // 市場を指定
         },
       }
     );
 
     const topTracks = response.data.tracks.slice(0, 10);
-    return NextResponse.json(topTracks);
+    return NextResponse.json({ topTracks: topTracks }, { status: 200 });
   } catch (error: any) {
-    return NextResponse.json({ error: 'Failed to fetch top tracks', artistId: error }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch top tracks", artistId: error },
+      { status: 500 }
+    );
   }
 }
