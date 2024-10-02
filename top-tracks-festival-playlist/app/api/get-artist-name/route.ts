@@ -27,7 +27,6 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    console.log("rrr", response);
     const data = response.data; // Axiosは自動でレスポンスをJSONにパースするため、`.json()`は不要
 
     if (data.artists.items.length > 0) {
