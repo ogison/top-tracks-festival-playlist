@@ -40,6 +40,7 @@ interface Track {
   id: string;
   name: string;
   artists: { name: string }[];
+  uri: string;
 }
 
 // バリデーションスキーマを定義
@@ -106,11 +107,16 @@ export default function Home() {
    * プレイリストを作成します
    */
   const makePlaylist = async () => {
+    const trackUris: string[] = [];
+    topTracks.map((track) => {
+      trackUris.push(track?.uri);
+    });
     setError("");
     try {
-      await axios.post("/api/make-playlist", {
+      const response = await axios.post("/api/make-playlist", {
         playlistName: playlistName,
         access_token: access_token,
+        trackUris: trackUris,
       });
     } catch (error: any) {
       setIsErrorDialogOpen(true);
