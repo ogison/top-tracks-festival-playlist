@@ -1,6 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -33,32 +32,33 @@ import {
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { artist_item } from "@/types";
 import { useSearchParams } from "next/navigation";
-
-interface Track {
-  id: string;
-  name: string;
-  artists: { name: string }[];
-}
+import { useArtistSuggestions } from "../hooks/useArtistSuggestions ";
+import { fetchTopTracks, makePlaylist } from "../lib/spotify";
+import { Artist, SearchForm, Track } from "../types";
+import { handleSelectArtist } from "../handlers/handleArtist";
+import ArtistSuggestionsList from "../components/ArtistSuggestionsList";
 
 // バリデーションスキーマを定義
 const schema = z.object({
   artistName: z
     .string()
-    .min(1, { message: "アーティスト名は1文字以上入れてください" }), // 必須チェック
+    .min(1, { message: "アーティスト名は1文字以上入れてください" }),
+  playlistName: z
+    .string()
+    .min(1, { message: "プレイリスト名は1文字以上入れてください" }),
 });
 
 export default function Home() {
   const searchParams = useSearchParams();
   const access_token = searchParams.get("access_token");
-
-  const [artistId, setArtistId] = useState<string>("");
-  const [topTracks, setTopTracks] = useState<Track[]>([]);
   const [error, setError] = useState<string>("");
 
+  // 楽曲を管理
+  const [topTracks, setTopTracks] = useState<Track[]>([]);
+
   // アーティスト候補を管理
-  const [artistSuggestions, setArtistSuggestions] = useState<artist_item[]>([]);
+  const [artistSuggestions, setArtistSuggestions] = useState<Artist[]>([]);
 
   //　ローディングの状態を管理
   const [loading, setLoading] = useState<boolean>(false);
@@ -66,35 +66,29 @@ export default function Home() {
   // ダイアログ表示を管理
   const [isErrorDialogOpen, setIsErrorDialogOpen] = useState<boolean>(false);
 
-  const form = useForm({
+  // フォームの値
+  const form = useForm<SearchForm>({
     resolver: zodResolver(schema),
     defaultValues: {
       artistName: "",
       playlistName: "",
     },
   });
-
-  // フォームの値を監視
   const artistName = form.watch("artistName");
   const playlistName = form.watch("playlistName");
+
+  // アーティスト検索APIを呼び出す関数
+  useArtistSuggestions(artistName, setArtistSuggestions);
 
   /*
    * 指定したアーティストの人気のTOP10曲を取得します
    */
-  const fetchTopTracks = async () => {
+  const handleFetchTopTracks = async () => {
     setLoading(true);
     setError("");
     try {
-      const response1 = await axios.get("/api/get-artistid", {
-        params: { artistName: artistName },
-      });
-      const artistId = response1.data.artistId;
-      if (artistId) {
-        const response2 = await axios.get("/api/top-tracks", {
-          params: { artistId },
-        });
-        await setTopTracks(response2?.data.topTracks);
-      }
+      const tracks = await fetchTopTracks(artistName);
+      await setTopTracks(tracks);
     } catch (error: any) {
       setIsErrorDialogOpen(true);
     } finally {
@@ -105,54 +99,20 @@ export default function Home() {
   /*
    * プレイリストを作成します
    */
-  const makePlaylist = async () => {
-    setError("");
-    try {
-      await axios.post("/api/make-playlist", {
-        playlistName: playlistName,
-        access_token: access_token,
+  const handleMakePlaylist = async () => {
+    if (access_token) {
+      const trackUris: string[] = [];
+      topTracks.map((track) => {
+        trackUris.push(track?.uri);
       });
-    } catch (error: any) {
-      setIsErrorDialogOpen(true);
+      setError("");
+      try {
+        await makePlaylist(playlistName, access_token, trackUris);
+      } catch (error: any) {
+        setIsErrorDialogOpen(true);
+      }
     }
   };
-
-  // アーティスト検索APIを呼び出す関数
-  const fetchArtistSuggestions = async () => {
-    if (!artistName) return;
-
-    const response = await axios.get("/api/get-artist-name", {
-      params: { artistName: artistName },
-    });
-
-    const data = await response?.data;
-    setArtistSuggestions(data.artists);
-  };
-
-  // 選択したアーティスト名をInputにセットする関数
-  const handleSelectArtist = (artistName: string) => {
-    form.setValue("artistName", artistName); // Inputフィールドに値をセット
-    setArtistSuggestions([]); // 選択後、リストをクリア
-  };
-
-  useEffect(() => {
-    if (artistName.length > 0) {
-      const timeoutId = setTimeout(() => {
-        try {
-          // API呼び出しなどの処理
-          fetchArtistSuggestions();
-        } catch (error) {
-          console.error("Error fetching artist suggestions:", error);
-        } finally {
-          // ここで必ずタイムアウトをクリア
-          clearTimeout(timeoutId);
-        }
-      }, 1000); // 1000msのデバウンス
-
-      // 前回のタイムアウトをクリアするためのクリーンアップ
-      return () => clearTimeout(timeoutId);
-    }
-  }, [artistName]);
 
   return (
     <div className="container mx-auto p-4">
@@ -163,7 +123,7 @@ export default function Home() {
         <CardContent>
           <Form {...form}>
             <form
-              onSubmit={form.handleSubmit(fetchTopTracks)}
+              onSubmit={form.handleSubmit(handleFetchTopTracks)}
               className="flex space-x-2 mb-4"
             >
               <FormField
@@ -183,19 +143,12 @@ export default function Home() {
                       </FormControl>
                     </div>
 
-                    {artistSuggestions?.length > 0 && (
-                      <ul>
-                        {artistSuggestions.map((artist) => (
-                          <li
-                            key={artist.id}
-                            onClick={() => handleSelectArtist(artist.name)} // クリックで選択
-                            style={{ cursor: "pointer", listStyle: "none" }} // ポインタを示すスタイル
-                          >
-                            {artist.name}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
+                    <ArtistSuggestionsList
+                      artistSuggestions={artistSuggestions}
+                      handleSelectArtist={handleSelectArtist}
+                      form={form}
+                      setArtistSuggestions={setArtistSuggestions}
+                    />
                     <FormMessage />
                   </FormItem>
                 )}
@@ -205,7 +158,7 @@ export default function Home() {
           </Form>
           <Form {...form}>
             <form
-              onSubmit={form.handleSubmit(makePlaylist)}
+              onSubmit={form.handleSubmit(handleMakePlaylist)}
               className="flex space-x-2 mb-4"
             >
               <FormField
@@ -241,8 +194,9 @@ export default function Home() {
                   <TableHeader>
                     <TableRow>
                       <TableHead className="w-[100px]">#</TableHead>
-                      <TableHead>Artist</TableHead>
+                      <TableHead>image</TableHead>
                       <TableHead>Song</TableHead>
+                      <TableHead>Artist</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -253,6 +207,18 @@ export default function Home() {
                       >
                         <TableCell className="font-medium">
                           {index + 1}
+                        </TableCell>
+                        <TableCell>
+                          {/* Adding an image of the album art */}
+                          {song?.album.images[0]?.url ? (
+                            <img
+                              src={song?.album.images[0].url}
+                              alt={`${song.name} album art`}
+                              className="w-[50px] h-[50px] object-cover" // Adjust the size and styling of the image
+                            />
+                          ) : (
+                            <span>No Image</span>
+                          )}
                         </TableCell>
                         <TableCell>{song.name}</TableCell>
                         <TableCell>{song.artists[0].name}</TableCell>

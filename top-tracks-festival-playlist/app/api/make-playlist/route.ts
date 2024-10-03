@@ -6,6 +6,7 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const playlistName = body.playlistName;
   const accessToken = body.access_token;
+  const trackUris = body.trackUris;
 
   // プレイリスト名が指定されていない場合、エラーレスポンスを返す
   if (!playlistName) {
@@ -30,7 +31,7 @@ export async function POST(req: NextRequest) {
       `https://api.spotify.com/v1/users/${userId}/playlists`,
       {
         name: playlistName,
-        public: false, // プレイリストは非公開
+        public: true, // プレイリストは公開
       },
       {
         headers: {
@@ -39,6 +40,24 @@ export async function POST(req: NextRequest) {
         },
       }
     );
+
+    const playlistId = playlistResponse.data.id;
+
+    // プレイリストにトラックを追加
+    if (trackUris.length > 0) {
+      await axios.post(
+        `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+        {
+          uris: trackUris, // 追加するトラックのURI配列
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
 
     const data = playlistResponse.data; // Axiosは自動でレスポンスをJSONにパースするため、`.json()`は不要
 
