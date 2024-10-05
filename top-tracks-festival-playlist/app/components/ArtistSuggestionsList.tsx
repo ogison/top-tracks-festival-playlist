@@ -1,15 +1,11 @@
 import React from "react";
-import { Artist, SearchForm } from "../types";
+import { Artist, ArtistSearchForm } from "../types";
 import { UseFormReturn } from "react-hook-form";
+import { handleSelectArtist } from "../handlers/handleArtist";
 
 interface ArtistSuggestionsListProps {
   artistSuggestions: Artist[];
-  handleSelectArtist: (
-    artistName: string,
-    form: UseFormReturn<SearchForm>,
-    setArtistSuggestions: (artistSuggestions: Artist[]) => void
-  ) => void;
-  form: UseFormReturn<SearchForm>;
+  form: UseFormReturn<ArtistSearchForm>;
   setArtistSuggestions: (artistSuggestions: Artist[]) => void;
 }
 
@@ -18,7 +14,6 @@ interface ArtistSuggestionsListProps {
  */
 const ArtistSuggestionsList: React.FC<ArtistSuggestionsListProps> = ({
   artistSuggestions,
-  handleSelectArtist,
   form,
   setArtistSuggestions,
 }) => {

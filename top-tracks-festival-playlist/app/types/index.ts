@@ -11,6 +11,14 @@ export type SearchForm = {
   playlistName: string;
 };
 
+export type ArtistSearchForm = {
+  artistName: string;
+};
+
+export type PlaylistSearchForm = {
+  playlistName: string;
+};
+
 export interface Artist {
   id: string;
   name: string;
