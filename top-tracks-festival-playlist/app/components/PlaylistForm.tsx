@@ -6,6 +6,17 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { makePlaylist } from "../lib/spotify";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -90,7 +101,24 @@ const PlaylistForm: React.FC<PlaylistFormProps> = ({
               </FormItem>
             )}
           />
-          <Button type="submit">プレイリスト作成</Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button type="submit">プレイリスト作成</Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>プレイリストを作成しますか?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  続行してもよろしいですか？
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>キャンセル</AlertDialogCancel>
+                <AlertDialogAction>はい</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+          {/* <Button type="submit">プレイリスト作成</Button> */}
         </form>
       </Form>
     </>
