@@ -82,13 +82,15 @@ export default function Home() {
 
   /*
    * 指定したアーティストの人気のTOP10曲を取得します
+   * 取得した楽曲を楽曲リストに追加します
    */
   const handleFetchTopTracks = async () => {
     setLoading(true);
     setError("");
     try {
       const tracks = await fetchTopTracks(artistName);
-      await setTopTracks(tracks);
+      // 楽曲リストに追加
+      await setTopTracks((prevTracks) => [...prevTracks, ...tracks]);
     } catch (error: any) {
       setIsErrorDialogOpen(true);
     } finally {
@@ -153,7 +155,7 @@ export default function Home() {
                   </FormItem>
                 )}
               />
-              <Button type="submit">アーティスト名検索</Button>
+              <Button type="submit">人気曲追加</Button>
             </form>
           </Form>
           <Form {...form}>

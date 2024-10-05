@@ -53,15 +53,6 @@ export default function HomePage() {
           MAKE YOUR PLAYLIST
         </motion.a>
       </div>
-      <style jsx global>{`
-        @font-face {
-          font-family: "PixelFont";
-          src: url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
-        }
-        .pixel-font {
-          font-family: "Press Start 2P", cursive;
-        }
-      `}</style>
     </div>
   );
 }
