@@ -1,12 +1,12 @@
 import { UseFormReturn } from "react-hook-form";
-import { Artist, SearchForm } from "../types";
+import { Artist, ArtistSearchForm } from "../types";
 
 /*
  * 選択したアーティスト名をInputにセットする関数
  */
 export const handleSelectArtist = (
   artistName: string,
-  form: UseFormReturn<SearchForm>,
+  form: UseFormReturn<ArtistSearchForm>,
   setArtistSuggestions: (artistSuggestions: Artist[]) => void
 ) => {
   form.setValue("artistName", artistName);

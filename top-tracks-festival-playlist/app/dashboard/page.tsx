@@ -34,10 +34,9 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSearchParams } from "next/navigation";
 import { useArtistSuggestions } from "../hooks/useArtistSuggestions ";
-import { fetchTopTracks, makePlaylist } from "../lib/spotify";
+import { makePlaylist } from "../lib/spotify";
 import { Artist, SearchForm, Track } from "../types";
-import { handleSelectArtist } from "../handlers/handleArtist";
-import ArtistSuggestionsList from "../components/ArtistSuggestionsList";
+import ArtistForm from "../components/ArtistForm";
 
 // バリデーションスキーマを定義
 const schema = z.object({
@@ -81,24 +80,6 @@ export default function Home() {
   useArtistSuggestions(artistName, setArtistSuggestions);
 
   /*
-   * 指定したアーティストの人気のTOP10曲を取得します
-   * 取得した楽曲を楽曲リストに追加します
-   */
-  const handleFetchTopTracks = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      const tracks = await fetchTopTracks(artistName);
-      // 楽曲リストに追加
-      await setTopTracks((prevTracks) => [...prevTracks, ...tracks]);
-    } catch (error: any) {
-      setIsErrorDialogOpen(true);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  /*
    * プレイリストを作成します
    */
   const handleMakePlaylist = async () => {
@@ -123,41 +104,14 @@ export default function Home() {
           <CardTitle>Spotify Playlist Creator</CardTitle>
         </CardHeader>
         <CardContent>
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(handleFetchTopTracks)}
-              className="flex space-x-2 mb-4"
-            >
-              <FormField
-                control={form.control}
-                name="artistName"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="flex">
-                      <FormLabel className="flex w-40 items-center">
-                        アーティスト名
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="アーティスト名を入力してください"
-                          {...field}
-                        />
-                      </FormControl>
-                    </div>
-
-                    <ArtistSuggestionsList
-                      artistSuggestions={artistSuggestions}
-                      handleSelectArtist={handleSelectArtist}
-                      form={form}
-                      setArtistSuggestions={setArtistSuggestions}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit">人気曲追加</Button>
-            </form>
-          </Form>
+          <ArtistForm
+            setLoading={setLoading}
+            setError={setError}
+            setTopTracks={setTopTracks}
+            setIsErrorDialogOpen={setIsErrorDialogOpen}
+            setArtistSuggestions={setArtistSuggestions}
+            artistSuggestions={artistSuggestions}
+          />
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(handleMakePlaylist)}
