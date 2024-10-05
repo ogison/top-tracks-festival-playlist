@@ -14,6 +14,7 @@ import ArtistSuggestionsList from "./ArtistSuggestionsList";
 import { Button } from "@/components/ui/button";
 import { Artist, ArtistSearchForm, Track } from "../types";
 import { z } from "zod";
+import { useArtistSuggestions } from "../hooks/useArtistSuggestions ";
 
 // バリデーションスキーマを定義
 const schema = z.object({
@@ -46,8 +47,10 @@ const ArtistForm: React.FC<ArtistFormProps> = ({
       artistName: "",
     },
   });
-
   const artistName = form.watch("artistName");
+
+  // アーティスト検索APIを呼び出す関数
+  useArtistSuggestions(artistName, setArtistSuggestions);
 
   /*
    * 指定したアーティストの人気のTOP10曲を取得し、リストに追加

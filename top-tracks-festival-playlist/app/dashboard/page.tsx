@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -21,36 +20,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useSearchParams } from "next/navigation";
-import { useArtistSuggestions } from "../hooks/useArtistSuggestions ";
-import { makePlaylist } from "../lib/spotify";
-import { Artist, SearchForm, Track } from "../types";
+import { Artist, Track } from "../types";
 import ArtistForm from "../components/ArtistForm";
-
-// バリデーションスキーマを定義
-const schema = z.object({
-  artistName: z
-    .string()
-    .min(1, { message: "アーティスト名は1文字以上入れてください" }),
-  playlistName: z
-    .string()
-    .min(1, { message: "プレイリスト名は1文字以上入れてください" }),
-});
+import PlaylistForm from "../components/PlaylistForm";
 
 export default function Home() {
-  const searchParams = useSearchParams();
-  const access_token = searchParams.get("access_token");
   const [error, setError] = useState<string>("");
 
   // 楽曲を管理
@@ -64,38 +38,6 @@ export default function Home() {
 
   // ダイアログ表示を管理
   const [isErrorDialogOpen, setIsErrorDialogOpen] = useState<boolean>(false);
-
-  // フォームの値
-  const form = useForm<SearchForm>({
-    resolver: zodResolver(schema),
-    defaultValues: {
-      artistName: "",
-      playlistName: "",
-    },
-  });
-  const artistName = form.watch("artistName");
-  const playlistName = form.watch("playlistName");
-
-  // アーティスト検索APIを呼び出す関数
-  useArtistSuggestions(artistName, setArtistSuggestions);
-
-  /*
-   * プレイリストを作成します
-   */
-  const handleMakePlaylist = async () => {
-    if (access_token) {
-      const trackUris: string[] = [];
-      topTracks.map((track) => {
-        trackUris.push(track?.uri);
-      });
-      setError("");
-      try {
-        await makePlaylist(playlistName, access_token, trackUris);
-      } catch (error: any) {
-        setIsErrorDialogOpen(true);
-      }
-    }
-  };
 
   return (
     <div className="container mx-auto p-4">
@@ -112,34 +54,11 @@ export default function Home() {
             setArtistSuggestions={setArtistSuggestions}
             artistSuggestions={artistSuggestions}
           />
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(handleMakePlaylist)}
-              className="flex space-x-2 mb-4"
-            >
-              <FormField
-                control={form.control}
-                name="playlistName"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="flex">
-                      <FormLabel className="flex w-40 items-center">
-                        プレイリスト名
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="プレイリスト名を入力してください"
-                          {...field}
-                        />
-                      </FormControl>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit">プレイリスト作成</Button>
-            </form>
-          </Form>
+          <PlaylistForm
+            setError={setError}
+            setIsErrorDialogOpen={setIsErrorDialogOpen}
+            topTracks={topTracks}
+          />
           {loading ? (
             <Loading />
           ) : (
