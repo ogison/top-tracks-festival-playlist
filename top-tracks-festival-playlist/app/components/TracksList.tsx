@@ -54,10 +54,11 @@ const TracksList: React.FC<TracksListProps> = ({ topTracks, setTopTracks }) => {
                   />
                 </TableCell>
                 <TableCell>
-                  {/* Adding an image of the album art */}
                   {song?.album.images[0]?.url ? (
                     <Image
                       src={song?.album.images[0].url}
+                      width={Number(song?.album.images[0].width)}
+                      height={Number(song?.album.images[0].height)}
                       alt={`${song.name} album art`}
                       className="w-[50px] h-[50px] object-cover" // Adjust the size and styling of the image
                     />
