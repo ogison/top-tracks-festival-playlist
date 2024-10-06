@@ -16,10 +16,12 @@ export async function GET(req: NextRequest) {
     const data = response.data;
 
     return NextResponse.json({ userData: data }, { status: 200 });
-  } catch (error: any) {
-    return NextResponse.json(
-      { error: "Failed to fetch artist data", details: error.message },
-      { status: 500 }
-    );
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return NextResponse.json(
+        { error: "Failed to fetch artist data", details: error.message },
+        { status: 500 }
+      );
+    }
   }
 }

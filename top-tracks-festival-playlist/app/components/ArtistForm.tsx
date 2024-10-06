@@ -25,8 +25,7 @@ const schema = z.object({
 
 interface ArtistFormProps {
   setLoading: (loading: boolean) => void;
-  setError: (error: string) => void;
-  setTopTracks: (topTracks: any) => void;
+  setTopTracks: React.Dispatch<React.SetStateAction<Track[]>>;
   setIsErrorDialogOpen: (isErrorDialogOpen: boolean) => void;
   setArtistSuggestions: (artistSuggestions: Artist[]) => void;
   artistSuggestions: Artist[];
@@ -34,7 +33,6 @@ interface ArtistFormProps {
 
 const ArtistForm: React.FC<ArtistFormProps> = ({
   setLoading,
-  setError,
   setTopTracks,
   setIsErrorDialogOpen,
   setArtistSuggestions,
@@ -57,7 +55,6 @@ const ArtistForm: React.FC<ArtistFormProps> = ({
    */
   const handleFetchTopTracks = async () => {
     setLoading(true);
-    setError("");
     try {
       const tracks: Track[] = (await fetchTopTracks(artistName)).map(
         (track) => ({ ...track, isCheck: true })
@@ -67,8 +64,7 @@ const ArtistForm: React.FC<ArtistFormProps> = ({
         ...prevTopTracks,
         ...tracks,
       ]);
-    } catch (error: any) {
-      setError("楽曲の取得に失敗しました。もう一度お試しください。");
+    } catch {
       setIsErrorDialogOpen(true);
     } finally {
       setLoading(false);

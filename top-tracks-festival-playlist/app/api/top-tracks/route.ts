@@ -29,10 +29,12 @@ export async function GET(req: NextRequest) {
 
     const topTracks = response.data.tracks.slice(0, 10);
     return NextResponse.json({ topTracks: topTracks }, { status: 200 });
-  } catch (error: any) {
-    return NextResponse.json(
-      { error: "Failed to fetch top tracks", artistId: error },
-      { status: 500 }
-    );
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return NextResponse.json(
+        { error: "Failed to fetch top tracks", artistId: error },
+        { status: 500 }
+      );
+    }
   }
 }

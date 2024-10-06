@@ -18,8 +18,6 @@ import PlaylistForm from "../components/PlaylistForm";
 import TracksList from "../components/TracksList";
 
 export default function Home() {
-  const [error, setError] = useState<string>("");
-
   // 楽曲を管理
   const [topTracks, setTopTracks] = useState<Track[]>([]);
 
@@ -41,14 +39,12 @@ export default function Home() {
         <CardContent>
           <ArtistForm
             setLoading={setLoading}
-            setError={setError}
             setTopTracks={setTopTracks}
             setIsErrorDialogOpen={setIsErrorDialogOpen}
             setArtistSuggestions={setArtistSuggestions}
             artistSuggestions={artistSuggestions}
           />
           <PlaylistForm
-            setError={setError}
             setIsErrorDialogOpen={setIsErrorDialogOpen}
             topTracks={topTracks}
           />

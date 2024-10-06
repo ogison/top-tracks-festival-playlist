@@ -1,3 +1,4 @@
+"use client";
 import {
   Form,
   FormControl,
@@ -25,7 +26,7 @@ import { Button } from "@/components/ui/button";
 import { PlaylistSearchForm, Track } from "../types";
 import { z } from "zod";
 import { useSearchParams } from "next/navigation";
-import { useRef, useState } from "react";
+import { Suspense, useRef, useState } from "react";
 import {
   Dialog,
   DialogClose,
@@ -44,13 +45,19 @@ const schema = z.object({
 });
 
 interface PlaylistFormProps {
-  setError: (error: string) => void;
   setIsErrorDialogOpen: (isErrorDialogOpen: boolean) => void;
   topTracks: Track[];
 }
 
-const PlaylistForm: React.FC<PlaylistFormProps> = ({
-  setError,
+const PlaylistForm = (props: PlaylistFormProps) => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PlaylistFormContent {...props} />
+    </Suspense>
+  );
+};
+
+const PlaylistFormContent: React.FC<PlaylistFormProps> = ({
   setIsErrorDialogOpen,
   topTracks,
 }) => {
@@ -81,11 +88,10 @@ const PlaylistForm: React.FC<PlaylistFormProps> = ({
           trackUris.push(track?.uri);
         }
       });
-      setError("");
       try {
         await makePlaylist(playlistName, access_token, trackUris);
         setIsSuccessDialogOpen(true);
-      } catch (error: any) {
+      } catch {
         setIsErrorDialogOpen(true);
       }
     }

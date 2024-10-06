@@ -1,9 +1,19 @@
+export interface Images {
+  url: string;
+  width: string;
+  height: string;
+}
+
+export interface Album {
+  images: Images[];
+}
+
 export interface Track {
   id: string;
   name: string;
   artists: { name: string }[];
   uri: string;
-  album: any;
+  album: Album;
   isCheck: boolean;
 }
 

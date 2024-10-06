@@ -66,13 +66,15 @@ export async function POST(req: NextRequest) {
     } else {
       return NextResponse.json({ error: "Artist not found" }, { status: 404 });
     }
-  } catch (error: any) {
-    return NextResponse.json(
-      {
-        error: "Failed to fetch artist data",
-        details: error.response?.data || error.message,
-      },
-      { status: 500 }
-    );
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return NextResponse.json(
+        {
+          error: "Failed to fetch artist data",
+          details: error.message,
+        },
+        { status: 500 }
+      );
+    }
   }
 }
