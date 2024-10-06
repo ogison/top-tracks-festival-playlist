@@ -63,7 +63,9 @@ export default function Home() {
           {loading ? (
             <Loading />
           ) : (
-            topTracks.length > 0 && <TracksList topTracks={topTracks} />
+            topTracks.length > 0 && (
+              <TracksList topTracks={topTracks} setTopTracks={setTopTracks} />
+            )
           )}
           <Dialog open={isErrorDialogOpen}>
             <DialogContent className="sm:max-w-[425px]">

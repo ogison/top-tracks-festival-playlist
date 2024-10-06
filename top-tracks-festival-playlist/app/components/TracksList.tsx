@@ -7,12 +7,26 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Track } from "../types";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface TracksListProps {
   topTracks: Track[];
+  setTopTracks: (topTracks: Track[]) => void;
 }
 
-const TracksList: React.FC<TracksListProps> = ({ topTracks }) => {
+const TracksList: React.FC<TracksListProps> = ({ topTracks, setTopTracks }) => {
+  /*
+   * チェックボックスを更新します
+   */
+  const handleCheckboxChange = (index: number) => {
+    const track = topTracks[index];
+    const updatedTrack = { ...track, isCheck: !track.isCheck };
+    const updatedTracks = [...topTracks];
+    updatedTracks[index] = updatedTrack;
+
+    setTopTracks(updatedTracks);
+  };
+
   return (
     <>
       <div className="mt-4 overflow-x-auto">
@@ -32,7 +46,12 @@ const TracksList: React.FC<TracksListProps> = ({ topTracks }) => {
                 key={index}
                 className={index % 2 === 0 ? "bg-muted/50" : ""}
               >
-                <TableCell className="font-medium">{index + 1}</TableCell>
+                <TableCell>
+                  <Checkbox
+                    checked={song.isCheck}
+                    onCheckedChange={() => handleCheckboxChange(index)}
+                  />
+                </TableCell>
                 <TableCell>
                   {/* Adding an image of the album art */}
                   {song?.album.images[0]?.url ? (

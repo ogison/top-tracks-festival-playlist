@@ -59,7 +59,9 @@ const ArtistForm: React.FC<ArtistFormProps> = ({
     setLoading(true);
     setError("");
     try {
-      const tracks: Track[] = await fetchTopTracks(artistName);
+      const tracks: Track[] = (await fetchTopTracks(artistName)).map(
+        (track) => ({ ...track, isCheck: true })
+      );
       // 楽曲リストに追加
       await setTopTracks((prevTopTracks: Track[]) => [
         ...prevTopTracks,
