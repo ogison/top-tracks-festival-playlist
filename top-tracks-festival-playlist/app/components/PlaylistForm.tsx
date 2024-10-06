@@ -118,7 +118,6 @@ const PlaylistForm: React.FC<PlaylistFormProps> = ({
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-          {/* <Button type="submit">プレイリスト作成</Button> */}
         </form>
       </Form>
     </>
