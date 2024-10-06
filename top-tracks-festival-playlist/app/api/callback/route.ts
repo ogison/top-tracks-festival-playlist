@@ -5,9 +5,9 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const code = searchParams.get("code");
 
-  const redirectUri = process.env.NEXT_PUBLIC_SPOTIFY_REDIRECT_URI!;
-  const clientId = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID!;
-  const clientSecret = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET!;
+  const redirectUri = process.env.SPOTIFY_REDIRECT_URI!;
+  const clientId = process.env.SPOTIFY_CLIENT_ID!;
+  const clientSecret = process.env.SPOTIFY_CLIENT_SECRET!;
 
   if (!code) {
     return NextResponse.json(
@@ -26,8 +26,6 @@ export async function GET(req: NextRequest) {
         grant_type: "authorization_code",
         code,
         redirect_uri: redirectUri,
-        // client_id: clientId,
-        // client_secret: clientSecret,
       }),
       {
         headers: {

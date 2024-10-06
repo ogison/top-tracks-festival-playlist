@@ -25,7 +25,7 @@ import { Button } from "@/components/ui/button";
 import { PlaylistSearchForm, Track } from "../types";
 import { z } from "zod";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Dialog,
   DialogClose,
@@ -56,6 +56,7 @@ const PlaylistForm: React.FC<PlaylistFormProps> = ({
 }) => {
   const searchParams = useSearchParams();
   const access_token = searchParams.get("access_token");
+  const formRef = useRef<HTMLFormElement | null>(null);
 
   // プレイリスト作成後の成功ダイアログを管理
   const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
@@ -94,6 +95,7 @@ const PlaylistForm: React.FC<PlaylistFormProps> = ({
     <>
       <Form {...form}>
         <form
+          ref={formRef}
           onSubmit={form.handleSubmit(handleMakePlaylist)}
           className="flex space-x-2 mb-4"
         >
@@ -119,7 +121,7 @@ const PlaylistForm: React.FC<PlaylistFormProps> = ({
           />
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button type="submit">プレイリスト作成</Button>
+              <Button type="button">プレイリスト作成</Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
@@ -130,7 +132,14 @@ const PlaylistForm: React.FC<PlaylistFormProps> = ({
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>キャンセル</AlertDialogCancel>
-                <AlertDialogAction>はい</AlertDialogAction>
+                <AlertDialogAction
+                  type="button"
+                  onClick={() => {
+                    form.handleSubmit(handleMakePlaylist)();
+                  }}
+                >
+                  はい
+                </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>

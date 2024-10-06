@@ -1,8 +1,8 @@
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 
-const clientId = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID ?? "";
-const clientSecret = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET ?? "";
+const clientId = process.env.SPOTIFY_CLIENT_ID ?? "";
+const clientSecret = process.env.SPOTIFY_CLIENT_SECRET ?? "";
 
 export async function GET(req: NextRequest) {
   const code = req.nextUrl.searchParams.get("code");
