@@ -4,6 +4,7 @@ export interface Track {
   artists: { name: string }[];
   uri: string;
   album: any;
+  isCheck: boolean;
 }
 
 export type SearchForm = {
