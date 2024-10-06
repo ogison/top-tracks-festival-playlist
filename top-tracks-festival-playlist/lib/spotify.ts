@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const clientId = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID ?? "";
-const clientSecret = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET ?? "";
+const clientId = process.env.SPOTIFY_CLIENT_ID ?? "";
+const clientSecret = process.env.SPOTIFY_CLIENT_SECRET ?? "";
 
 const getAccessToken = async (): Promise<string> => {
   if (!clientId || !clientSecret) {
@@ -29,16 +29,8 @@ const getAccessToken = async (): Promise<string> => {
       }
     );
     return response.data.access_token;
-  } catch (error: any) {
+  } catch {
     // エラーの詳細をコンソールに出力
-    if (error.response) {
-      console.error("Error Response:", error.response.data);
-      console.error("Status Code:", error.response.status);
-    } else if (error.request) {
-      console.error("No Response received:", error.request);
-    } else {
-      console.error("Error setting up request:", error.message);
-    }
     throw new Error("Failed to retrieve access token");
   }
 };

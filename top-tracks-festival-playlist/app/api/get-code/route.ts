@@ -1,8 +1,8 @@
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 
-const clientId = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID ?? "";
-const clientSecret = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET ?? "";
+const clientId = process.env.SPOTIFY_CLIENT_ID ?? "";
+const clientSecret = process.env.SPOTIFY_CLIENT_SECRET ?? "";
 
 export async function GET(req: NextRequest) {
   const code = req.nextUrl.searchParams.get("code");
@@ -33,13 +33,15 @@ export async function GET(req: NextRequest) {
 
     const accessToken = response.data.access_token;
     return NextResponse.json({ accessToken });
-  } catch (error: any) {
-    return NextResponse.json(
-      {
-        error: "Failed to retrieve access token",
-        details: error.response?.data || error.message,
-      },
-      { status: 500 }
-    );
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return NextResponse.json(
+        {
+          error: "Failed to retrieve access token",
+          details: error.message,
+        },
+        { status: 500 }
+      );
+    }
   }
 }

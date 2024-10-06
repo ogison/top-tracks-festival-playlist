@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/table";
 import { Track } from "../types";
 import { Checkbox } from "@/components/ui/checkbox";
+import Image from "next/image";
 
 interface TracksListProps {
   topTracks: Track[];
@@ -55,7 +56,7 @@ const TracksList: React.FC<TracksListProps> = ({ topTracks, setTopTracks }) => {
                 <TableCell>
                   {/* Adding an image of the album art */}
                   {song?.album.images[0]?.url ? (
-                    <img
+                    <Image
                       src={song?.album.images[0].url}
                       alt={`${song.name} album art`}
                       className="w-[50px] h-[50px] object-cover" // Adjust the size and styling of the image

@@ -5,9 +5,9 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const code = searchParams.get("code");
 
-  const redirectUri = process.env.NEXT_PUBLIC_SPOTIFY_REDIRECT_URI!;
-  const clientId = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID!;
-  const clientSecret = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET!;
+  const redirectUri = process.env.SPOTIFY_REDIRECT_URI!;
+  const clientId = process.env.SPOTIFY_CLIENT_ID!;
+  const clientSecret = process.env.SPOTIFY_CLIENT_SECRET!;
 
   if (!code) {
     return NextResponse.json(
@@ -26,8 +26,6 @@ export async function GET(req: NextRequest) {
         grant_type: "authorization_code",
         code,
         redirect_uri: redirectUri,
-        // client_id: clientId,
-        // client_secret: clientSecret,
       }),
       {
         headers: {
@@ -37,7 +35,7 @@ export async function GET(req: NextRequest) {
       }
     );
 
-    const { access_token, refresh_token, expires_in } = response.data;
+    const { access_token } = response.data;
 
     // トークンをセッションやデータベースに保存する処理を実装可能
     // ここでは、クエリパラメータに付けてリダイレクトする例を示します
@@ -47,20 +45,15 @@ export async function GET(req: NextRequest) {
     const absoluteUrl = `${protocol}://${host}/dashboard?access_token=${access_token}`;
 
     return NextResponse.redirect(absoluteUrl);
-  } catch (error: any) {
-    console.error("Error Response Data:", error.response?.data);
-    console.error("Error Response Status:", error.response?.status);
-    console.error("Error Message:", error.message);
-    console.error(
-      "Spotify authentication error:",
-      error.response?.data || error.message
-    );
-    return NextResponse.json(
-      {
-        error: "Failed to authenticate with Spotify",
-        details: error.response?.data || error.message,
-      },
-      { status: 500 }
-    );
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return NextResponse.json(
+        {
+          error: "Failed to authenticate with Spotify",
+          details: error.message,
+        },
+        { status: 500 }
+      );
+    }
   }
 }

@@ -26,7 +26,7 @@ export const fetchTopTracks = async (artistName: string): Promise<Track[]> => {
 
     // アーティストが見つからない場合は空の配列を返す
     return [];
-  } catch (error: any) {
+  } catch {
     throw new Error("Failed to fetch top tracks");
   }
 };
@@ -52,7 +52,7 @@ export const makePlaylist = async (
       trackUris: trackUris,
     });
     return response.data;
-  } catch (error: any) {
+  } catch {
     throw new Error("Failed to create playlist");
   }
 };

@@ -1,3 +1,4 @@
+"use client";
 import {
   Form,
   FormControl,
@@ -25,7 +26,7 @@ import { Button } from "@/components/ui/button";
 import { PlaylistSearchForm, Track } from "../types";
 import { z } from "zod";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useRef, useState } from "react";
 import {
   Dialog,
   DialogClose,
@@ -44,18 +45,25 @@ const schema = z.object({
 });
 
 interface PlaylistFormProps {
-  setError: (error: string) => void;
   setIsErrorDialogOpen: (isErrorDialogOpen: boolean) => void;
   topTracks: Track[];
 }
 
-const PlaylistForm: React.FC<PlaylistFormProps> = ({
-  setError,
+const PlaylistForm = (props: PlaylistFormProps) => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PlaylistFormContent {...props} />
+    </Suspense>
+  );
+};
+
+const PlaylistFormContent: React.FC<PlaylistFormProps> = ({
   setIsErrorDialogOpen,
   topTracks,
 }) => {
   const searchParams = useSearchParams();
   const access_token = searchParams.get("access_token");
+  const formRef = useRef<HTMLFormElement | null>(null);
 
   // プレイリスト作成後の成功ダイアログを管理
   const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
@@ -80,11 +88,10 @@ const PlaylistForm: React.FC<PlaylistFormProps> = ({
           trackUris.push(track?.uri);
         }
       });
-      setError("");
       try {
         await makePlaylist(playlistName, access_token, trackUris);
         setIsSuccessDialogOpen(true);
-      } catch (error: any) {
+      } catch {
         setIsErrorDialogOpen(true);
       }
     }
@@ -94,6 +101,7 @@ const PlaylistForm: React.FC<PlaylistFormProps> = ({
     <>
       <Form {...form}>
         <form
+          ref={formRef}
           onSubmit={form.handleSubmit(handleMakePlaylist)}
           className="flex space-x-2 mb-4"
         >
@@ -119,7 +127,7 @@ const PlaylistForm: React.FC<PlaylistFormProps> = ({
           />
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button type="submit">プレイリスト作成</Button>
+              <Button type="button">プレイリスト作成</Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
@@ -130,7 +138,14 @@ const PlaylistForm: React.FC<PlaylistFormProps> = ({
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>キャンセル</AlertDialogCancel>
-                <AlertDialogAction>はい</AlertDialogAction>
+                <AlertDialogAction
+                  type="button"
+                  onClick={() => {
+                    form.handleSubmit(handleMakePlaylist)();
+                  }}
+                >
+                  はい
+                </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
