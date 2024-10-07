@@ -31,52 +31,54 @@ export default function Home() {
   const [isErrorDialogOpen, setIsErrorDialogOpen] = useState<boolean>(false);
 
   return (
-    <div className="container mx-auto p-4">
-      <Card>
-        <CardHeader>
-          <CardTitle>Spotify Playlist Creator</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ArtistForm
-            setLoading={setLoading}
-            setTopTracks={setTopTracks}
-            setIsErrorDialogOpen={setIsErrorDialogOpen}
-            setArtistSuggestions={setArtistSuggestions}
-            artistSuggestions={artistSuggestions}
-          />
-          <PlaylistForm
-            setIsErrorDialogOpen={setIsErrorDialogOpen}
-            topTracks={topTracks}
-          />
-          {loading ? (
-            <Loading />
-          ) : (
-            topTracks.length > 0 && (
-              <TracksList topTracks={topTracks} setTopTracks={setTopTracks} />
-            )
-          )}
-          <Dialog open={isErrorDialogOpen}>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>認証エラー</DialogTitle>
-                <DialogDescription>値を入力してください</DialogDescription>
-              </DialogHeader>
+    <div className="min-h-screen bg-black text-green-500 font-mono">
+      <div className="container mx-auto p-4">
+        <Card>
+          <CardHeader>
+            <CardTitle>Spotify Playlist Creator</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ArtistForm
+              setLoading={setLoading}
+              setTopTracks={setTopTracks}
+              setIsErrorDialogOpen={setIsErrorDialogOpen}
+              setArtistSuggestions={setArtistSuggestions}
+              artistSuggestions={artistSuggestions}
+            />
+            <PlaylistForm
+              setIsErrorDialogOpen={setIsErrorDialogOpen}
+              topTracks={topTracks}
+            />
+          </CardContent>
+        </Card>
+        {loading ? (
+          <Loading />
+        ) : (
+          topTracks.length > 0 && (
+            <TracksList topTracks={topTracks} setTopTracks={setTopTracks} />
+          )
+        )}
+        <Dialog open={isErrorDialogOpen}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>認証エラー</DialogTitle>
+              <DialogDescription>値を入力してください</DialogDescription>
+            </DialogHeader>
 
-              <DialogFooter className="sm:justify-end">
-                <DialogClose asChild>
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    onClick={() => setIsErrorDialogOpen(false)}
-                  >
-                    Close
-                  </Button>
-                </DialogClose>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </CardContent>
-      </Card>
+            <DialogFooter className="sm:justify-end">
+              <DialogClose asChild>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => setIsErrorDialogOpen(false)}
+                >
+                  Close
+                </Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 }

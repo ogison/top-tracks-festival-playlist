@@ -22,7 +22,7 @@ import { makePlaylist } from "../lib/spotify";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { PlaylistSearchForm, Track } from "../types";
 import { z } from "zod";
 import { useSearchParams } from "next/navigation";
@@ -64,6 +64,8 @@ const PlaylistFormContent: React.FC<PlaylistFormProps> = ({
   const searchParams = useSearchParams();
   const access_token = searchParams.get("access_token");
   const formRef = useRef<HTMLFormElement | null>(null);
+
+  const [isHovered, setIsHovered] = useState(false);
 
   // プレイリスト作成後の成功ダイアログを管理
   const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
@@ -111,8 +113,8 @@ const PlaylistFormContent: React.FC<PlaylistFormProps> = ({
             render={({ field }) => (
               <FormItem>
                 <div className="flex">
-                  <FormLabel className="flex w-40 items-center">
-                    プレイリスト名
+                  <FormLabel className="flex w-48 items-center">
+                    プレイリスト名：
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -127,9 +129,18 @@ const PlaylistFormContent: React.FC<PlaylistFormProps> = ({
           />
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button type="button">プレイリスト作成</Button>
+              <Button
+                type="button"
+                className={`border border-input bg-background shadow-sm ${
+                  isHovered ? "bg-green-400 text-black" : "bg-black"
+                } hover:bg-green-400 transition-colors duration-300 pixel-font`}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+              >
+                プレイリスト作成
+              </Button>
             </AlertDialogTrigger>
-            <AlertDialogContent>
+            <AlertDialogContent className="bg-black text-green-500 font-mono">
               <AlertDialogHeader>
                 <AlertDialogTitle>プレイリストを作成しますか?</AlertDialogTitle>
                 <AlertDialogDescription>
@@ -140,6 +151,7 @@ const PlaylistFormContent: React.FC<PlaylistFormProps> = ({
                 <AlertDialogCancel>キャンセル</AlertDialogCancel>
                 <AlertDialogAction
                   type="button"
+                  className={buttonVariants({ variant: "outline" })}
                   onClick={() => {
                     form.handleSubmit(handleMakePlaylist)();
                   }}
@@ -155,7 +167,7 @@ const PlaylistFormContent: React.FC<PlaylistFormProps> = ({
         open={isSuccessDialogOpen}
         onOpenChange={() => setIsSuccessDialogOpen(false)}
       >
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md bg-black text-green-500 font-mono">
           <DialogHeader>
             <DialogTitle>プレイリスト作成成功</DialogTitle>
             <DialogDescription>
@@ -167,6 +179,7 @@ const PlaylistFormContent: React.FC<PlaylistFormProps> = ({
               <Button
                 type="button"
                 variant="secondary"
+                className={buttonVariants({ variant: "outline" })}
                 onClick={() => setIsSuccessDialogOpen(false)}
               >
                 閉じる
