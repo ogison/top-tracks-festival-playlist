@@ -1,3 +1,4 @@
+"use client";
 import {
   Form,
   FormControl,
@@ -15,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Artist, ArtistSearchForm, Track } from "../types";
 import { z } from "zod";
 import { useArtistSuggestions } from "../hooks/useArtistSuggestions ";
+import { useState } from "react";
 
 // バリデーションスキーマを定義
 const schema = z.object({
@@ -38,6 +40,8 @@ const ArtistForm: React.FC<ArtistFormProps> = ({
   setArtistSuggestions,
   artistSuggestions,
 }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
   // フォームのセットアップ
   const form = useForm<ArtistSearchForm>({
     resolver: zodResolver(schema),
@@ -84,11 +88,12 @@ const ArtistForm: React.FC<ArtistFormProps> = ({
             render={({ field }) => (
               <FormItem>
                 <div className="flex">
-                  <FormLabel className="flex w-40 items-center">
-                    アーティスト名
+                  <FormLabel className="flex w-48 items-center">
+                    アーティスト名：
                   </FormLabel>
                   <FormControl>
                     <Input
+                      className=" bg-black text-green-500 font-mono"
                       placeholder="アーティスト名を入力してください"
                       {...field}
                     />
@@ -104,7 +109,16 @@ const ArtistForm: React.FC<ArtistFormProps> = ({
               </FormItem>
             )}
           />
-          <Button type="submit">人気曲追加</Button>
+          <Button
+            type="submit"
+            className={`border border-input bg-background shadow-sm ${
+              isHovered ? "bg-green-400 text-black" : "bg-black"
+            } hover:bg-green-400 transition-colors duration-300 pixel-font`}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
+            人気曲追加
+          </Button>
         </form>
       </Form>
     </>
