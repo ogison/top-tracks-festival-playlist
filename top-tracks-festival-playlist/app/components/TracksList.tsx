@@ -37,6 +37,7 @@ const TracksList: React.FC<TracksListProps> = ({ topTracks, setTopTracks }) => {
             <CardTitle>Song Lists:</CardTitle>
           </CardHeader>
           <CardContent>
+            <div className="text-right underline">全{topTracks.length}件</div>
             <Table>
               <TableHeader>
                 <TableRow>
