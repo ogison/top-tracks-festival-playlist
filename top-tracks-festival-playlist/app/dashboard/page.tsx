@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Loading from "@/components/loading";
 import {
@@ -59,16 +59,19 @@ export default function Home() {
           )
         )}
         <Dialog open={isErrorDialogOpen}>
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className="sm:max-w-[425px] bg-black text-green-500 font-mono">
             <DialogHeader>
               <DialogTitle>認証エラー</DialogTitle>
-              <DialogDescription>値を入力してください</DialogDescription>
+              <DialogDescription>
+                プレイリスト作成に失敗しました
+              </DialogDescription>
             </DialogHeader>
 
             <DialogFooter className="sm:justify-end">
               <DialogClose asChild>
                 <Button
                   type="button"
+                  className={buttonVariants({ variant: "outline" })}
                   variant="secondary"
                   onClick={() => setIsErrorDialogOpen(false)}
                 >
