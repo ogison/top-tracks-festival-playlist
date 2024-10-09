@@ -37,7 +37,7 @@ export default function Home() {
         <div className="flex align-middle ">
           <Card>
             <CardHeader>
-              <CardTitle>Spotify Playlist Creator</CardTitle>
+              <CardTitle>PLAYLISTER X</CardTitle>
             </CardHeader>
             <CardContent>
               <ArtistForm
