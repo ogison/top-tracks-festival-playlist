@@ -16,6 +16,7 @@ import { Artist, Track } from "../types";
 import ArtistForm from "../components/ArtistForm";
 import PlaylistForm from "../components/PlaylistForm";
 import TracksList from "../components/TracksList";
+import SpotifyLogo from "../components/SpotifyLogo";
 
 export default function Home() {
   // 楽曲を管理
@@ -33,24 +34,30 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-black text-green-500 font-mono">
       <div className="container mx-auto p-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>Spotify Playlist Creator</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ArtistForm
-              setLoading={setLoading}
-              setTopTracks={setTopTracks}
-              setIsErrorDialogOpen={setIsErrorDialogOpen}
-              setArtistSuggestions={setArtistSuggestions}
-              artistSuggestions={artistSuggestions}
-            />
-            <PlaylistForm
-              setIsErrorDialogOpen={setIsErrorDialogOpen}
-              topTracks={topTracks}
-            />
-          </CardContent>
-        </Card>
+        <div className="flex align-middle ">
+          <Card>
+            <CardHeader>
+              <CardTitle>Spotify Playlist Creator</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ArtistForm
+                setLoading={setLoading}
+                setTopTracks={setTopTracks}
+                setIsErrorDialogOpen={setIsErrorDialogOpen}
+                setArtistSuggestions={setArtistSuggestions}
+                artistSuggestions={artistSuggestions}
+              />
+              <PlaylistForm
+                setIsErrorDialogOpen={setIsErrorDialogOpen}
+                topTracks={topTracks}
+              />
+            </CardContent>
+          </Card>
+          <div className="ml-auto">
+            <SpotifyLogo />
+          </div>
+        </div>
+
         {loading ? (
           <Loading />
         ) : (
