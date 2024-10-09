@@ -11,10 +11,11 @@ export interface Album {
 export interface Track {
   id: string;
   name: string;
-  artists: { name: string }[];
+  artists: { name: string; external_urls: SpotifyLink }[];
   uri: string;
   album: Album;
   isCheck: boolean;
+  external_urls: SpotifyLink;
 }
 
 export type SearchForm = {
@@ -28,6 +29,10 @@ export type ArtistSearchForm = {
 
 export type PlaylistSearchForm = {
   playlistName: string;
+};
+
+type SpotifyLink = {
+  spotify: string;
 };
 
 export interface Artist {
