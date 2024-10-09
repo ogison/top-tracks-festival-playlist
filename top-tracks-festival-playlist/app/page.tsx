@@ -14,7 +14,7 @@ export default function HomePage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          SPOTIFY PLAYLIST
+          PLAYLISTER X
         </motion.h1>
         <motion.div
           className="mb-8"
