@@ -11,12 +11,18 @@ import { fetchTopTracks } from "../lib/spotify";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
-import ArtistSuggestionsList from "./ArtistSuggestionsList";
 import { Button } from "@/components/ui/button";
 import { Artist, ArtistSearchForm, Track } from "../types";
 import { z } from "zod";
 import { useArtistSuggestions } from "../hooks/useArtistSuggestions ";
 import { useState } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { handleSelectArtist } from "../handlers/handleArtist";
 
 // バリデーションスキーマを定義
 const schema = z.object({
@@ -88,23 +94,44 @@ const ArtistForm: React.FC<ArtistFormProps> = ({
             render={({ field }) => (
               <FormItem>
                 <div className="flex">
-                  <FormLabel className="flex w-48 items-center">
-                    アーティスト名：
-                  </FormLabel>
                   <FormControl>
-                    <Input
-                      className=" bg-black text-green-500 font-mono"
-                      placeholder="アーティスト名を入力してください"
-                      {...field}
-                    />
+                    <DropdownMenu>
+                      <DropdownMenuTrigger>
+                        <div className="flex">
+                          <FormLabel className="flex w-48 items-center">
+                            アーティスト名：
+                          </FormLabel>
+                          <Input
+                            className=" bg-black text-green-500 font-mono"
+                            placeholder="アーティスト名を入力してください"
+                            {...field}
+                          />
+                        </div>
+                      </DropdownMenuTrigger>
+                      {artistSuggestions?.length > 0 && (
+                        <DropdownMenuContent className=" bg-black text-green-500 font-mon">
+                          <>
+                            {artistSuggestions.map((artist) => (
+                              <DropdownMenuItem
+                                key={artist.id}
+                                onClick={() =>
+                                  handleSelectArtist(
+                                    artist.name,
+                                    form,
+                                    setArtistSuggestions
+                                  )
+                                }
+                                style={{ cursor: "pointer", listStyle: "none" }}
+                              >
+                                {artist.name}
+                              </DropdownMenuItem>
+                            ))}
+                          </>
+                        </DropdownMenuContent>
+                      )}
+                    </DropdownMenu>
                   </FormControl>
                 </div>
-
-                <ArtistSuggestionsList
-                  artistSuggestions={artistSuggestions}
-                  form={form}
-                  setArtistSuggestions={setArtistSuggestions}
-                />
                 <FormMessage />
               </FormItem>
             )}

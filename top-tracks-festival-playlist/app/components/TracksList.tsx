@@ -1,3 +1,4 @@
+"use client";
 import {
   Table,
   TableBody,
@@ -10,6 +11,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Track } from "../types";
 import { Checkbox } from "@/components/ui/checkbox";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 interface TracksListProps {
   topTracks: Track[];
@@ -17,6 +20,9 @@ interface TracksListProps {
 }
 
 const TracksList: React.FC<TracksListProps> = ({ topTracks, setTopTracks }) => {
+  const [isHoveringSelectAll, setIsHoveringSelectAll] = useState(false);
+  const [isHoveringDeselectAll, setIsHoveringDeselectAll] = useState(false);
+
   /*
    * チェックボックスを更新します
    */
@@ -29,6 +35,30 @@ const TracksList: React.FC<TracksListProps> = ({ topTracks, setTopTracks }) => {
     setTopTracks(updatedTracks);
   };
 
+  /*
+   * 全てのチェックボックスをチェックがある状態に更新します
+   */
+  const handleSelectAll = () => {
+    const updatedTrackList = topTracks.map((track) => ({
+      ...track,
+      isCheck: true,
+    }));
+
+    setTopTracks(updatedTrackList);
+  };
+
+  /*
+   * 全てのチェックボックスをチェックがない状態に更新します
+   */
+  const handleDeSelectAll = () => {
+    const updatedTrackList = topTracks.map((track) => ({
+      ...track,
+      isCheck: false,
+    }));
+
+    setTopTracks(updatedTrackList);
+  };
+
   return (
     <>
       <div className="mt-4 overflow-x-auto">
@@ -37,6 +67,32 @@ const TracksList: React.FC<TracksListProps> = ({ topTracks, setTopTracks }) => {
             <CardTitle>Song Lists:</CardTitle>
           </CardHeader>
           <CardContent>
+            <div className="flex justify-end mb-4">
+              <Button
+                type="button"
+                className={`border border-input bg-background shadow-sm ${
+                  isHoveringSelectAll ? "bg-green-400 text-black" : "bg-black"
+                } hover:bg-green-400 transition-colors duration-300 pixel-font`}
+                onClick={handleSelectAll}
+                onMouseEnter={() => setIsHoveringSelectAll(true)}
+                onMouseLeave={() => setIsHoveringSelectAll(false)}
+              >
+                全選択
+              </Button>
+              <Button
+                type="button"
+                className={`border border-input bg-background ml-2 shadow-sm ${
+                  isHoveringDeselectAll ? "bg-green-400 text-black" : "bg-black"
+                } hover:bg-green-400 transition-colors duration-300 pixel-font`}
+                variant="secondary"
+                onClick={handleDeSelectAll}
+                onMouseEnter={() => setIsHoveringDeselectAll(true)}
+                onMouseLeave={() => setIsHoveringDeselectAll(false)}
+              >
+                全解除
+              </Button>
+            </div>
+
             <div className="text-right underline">全{topTracks.length}件</div>
             <Table>
               <TableHeader>
