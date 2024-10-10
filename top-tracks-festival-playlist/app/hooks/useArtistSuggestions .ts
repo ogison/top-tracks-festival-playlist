@@ -36,5 +36,6 @@ export const useArtistSuggestions = (
       // 前回のタイムアウトをクリアするためのクリーンアップ
       return () => clearTimeout(timeoutId);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [artistName]);
 };
