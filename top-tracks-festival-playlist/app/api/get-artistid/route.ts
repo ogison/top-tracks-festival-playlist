@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import getAccessToken from "../../../lib/spotify";
+import config from "@/config/config";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -20,9 +21,9 @@ export async function GET(req: NextRequest) {
         Authorization: `Bearer ${accessToken}`,
       },
       params: {
-        q: artistName, // クエリパラメータはparamsで指定
+        q: artistName,
         type: "artist",
-        market: "US", // 市場を指定
+        market: config.apiMarket,
         limit: 5,
       },
     });
