@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import getAccessToken from "../../../lib/spotify";
+import config from "@/config/config";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -20,20 +21,20 @@ export async function GET(req: NextRequest) {
         Authorization: `Bearer ${accessToken}`,
       },
       params: {
-        q: artistName, // クエリパラメータはparamsで指定
+        q: artistName,
         type: "artist",
-        market: "JP", // 市場を指定
+        market: config.apiMarket,
         limit: 5,
       },
     });
 
-    const data = response.data; // Axiosは自動でレスポンスをJSONにパースするため、`.json()`は不要
+    const data = response.data;
 
     if (data.artists.items.length > 0) {
       return NextResponse.json(
         { artists: data.artists.items },
         { status: 200 }
-      ); // IDをレスポンスとして返す
+      );
     } else {
       return NextResponse.json({ error: "Artist not found" }, { status: 404 });
     }
