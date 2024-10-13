@@ -22,7 +22,7 @@ import { Track } from "../types";
 import { Checkbox } from "@/components/ui/checkbox";
 import Image from "next/image";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface TracksListProps {
   topTracks: Track[];
@@ -30,9 +30,15 @@ interface TracksListProps {
 }
 
 const TracksList: React.FC<TracksListProps> = ({ topTracks, setTopTracks }) => {
-  const [isHoveringSelectAll, setIsHoveringSelectAll] = useState(false);
-  const [isHoveringDeselectAll, setIsHoveringDeselectAll] = useState(false);
-  const [isHoveringDeleteAll, setIsHoveringDeleteAll] = useState(false);
+  const [isHoveringSelectAll, setIsHoveringSelectAll] =
+    useState<boolean>(false);
+  const [isHoveringDeselectAll, setIsHoveringDeselectAll] =
+    useState<boolean>(false);
+  const [isHoveringDeleteAll, setIsHoveringDeleteAll] =
+    useState<boolean>(false);
+
+  // チェックがついている曲の個数
+  const [songCount, setSongCount] = useState<number>(0);
 
   /*
    * チェックボックスを更新します
@@ -69,6 +75,10 @@ const TracksList: React.FC<TracksListProps> = ({ topTracks, setTopTracks }) => {
 
     setTopTracks(updatedTrackList);
   };
+
+  useEffect(() => {
+    setSongCount(topTracks.filter((track) => track.isCheck).length);
+  }, [topTracks]);
 
   return (
     <>
@@ -139,7 +149,7 @@ const TracksList: React.FC<TracksListProps> = ({ topTracks, setTopTracks }) => {
               </AlertDialog>
             </div>
 
-            <div className="text-right underline">全{topTracks.length}件</div>
+            <div className="text-right underline">全{songCount}件</div>
             <Table>
               <TableHeader>
                 <TableRow>
