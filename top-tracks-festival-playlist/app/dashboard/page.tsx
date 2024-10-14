@@ -34,8 +34,8 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-black text-green-500 font-mono">
       <div className="container mx-auto p-4">
-        <div className="flex align-middle ">
-          <Card>
+        <div className="flex flex-col md:flex-row md:items-center">
+          <Card className="w-full md:w-2/3">
             <CardHeader>
               <CardTitle>PLAYLISTER X</CardTitle>
             </CardHeader>

@@ -86,7 +86,7 @@ const ArtistForm: React.FC<ArtistFormProps> = ({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(handleFetchTopTracks)}
-          className="flex space-x-2 mb-4"
+          className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-2 mb-4"
         >
           <FormField
             control={form.control}
@@ -97,8 +97,8 @@ const ArtistForm: React.FC<ArtistFormProps> = ({
                   <FormControl>
                     <DropdownMenu>
                       <DropdownMenuTrigger>
-                        <div className="flex">
-                          <FormLabel className="flex w-48 items-center">
+                        <div className="flex flex-col md:flex-row">
+                          <FormLabel className="flex w-full md:w-48 items-center mb-2 md:mb-0">
                             アーティスト名：
                           </FormLabel>
                           <Input
