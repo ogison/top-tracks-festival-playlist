@@ -17,14 +17,13 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    // アクセストークンを使って認証されたユーザーの情報を取得
+    // ユーザIDを取得
     const userResponse = await axios.get("https://api.spotify.com/v1/me", {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-
-    const userId = userResponse.data.id; // 認証されたユーザーのIDを取得
+    const userId = userResponse.data.id;
 
     // プレイリストを作成するリクエスト
     const playlistResponse = await axios.post(
@@ -48,7 +47,7 @@ export async function POST(req: NextRequest) {
       await axios.post(
         `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
         {
-          uris: trackUris, // 追加するトラックのURI配列
+          uris: trackUris,
         },
         {
           headers: {
@@ -59,18 +58,21 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const data = playlistResponse.data; // Axiosは自動でレスポンスをJSONにパースするため、`.json()`は不要
+    const data = playlistResponse.data;
 
     if (data) {
-      return NextResponse.json({ data: data }, { status: 200 }); // IDをレスポンスとして返す
+      return NextResponse.json({ data: data }, { status: 200 });
     } else {
-      return NextResponse.json({ error: "Artist not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Failed to make Playlist" },
+        { status: 404 }
+      );
     }
   } catch (error: unknown) {
     if (error instanceof Error) {
       return NextResponse.json(
         {
-          error: "Failed to fetch artist data",
+          error: "Failed to make Playlist",
           details: error.message,
         },
         { status: 500 }

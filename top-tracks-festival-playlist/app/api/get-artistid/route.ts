@@ -28,13 +28,13 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    const data = response.data; // Axiosは自動でレスポンスをJSONにパースするため、`.json()`は不要
+    const data = response.data;
 
     if (data.artists.items.length > 0) {
       return NextResponse.json(
         { artistId: data.artists.items[0].id },
         { status: 200 }
-      ); // IDをレスポンスとして返す
+      );
     } else {
       return NextResponse.json({ error: "Artist not found" }, { status: 404 });
     }
