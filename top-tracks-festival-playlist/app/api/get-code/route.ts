@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
       new URLSearchParams({
         grant_type: "authorization_code",
         code: code,
-        redirect_uri: "http://localhost:3000/api/callback", // 認証時に指定したリダイレクトURL
+        redirect_uri: "http://localhost:3000/api/callback",
         client_id: clientId,
         client_secret: clientSecret,
       }),

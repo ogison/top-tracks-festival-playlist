@@ -37,9 +37,7 @@ export async function GET(req: NextRequest) {
 
     const { access_token } = response.data;
 
-    // トークンをセッションやデータベースに保存する処理を実装可能
-    // ここでは、クエリパラメータに付けてリダイレクトする例を示します
-    // ホスト名を取得し、絶対URLにリダイレクトする
+    // メイン画面にリダイレクトする
     const host = req.headers.get("host");
     const protocol = req.headers.get("x-forwarded-proto") || "http";
     const absoluteUrl = `${protocol}://${host}/dashboard?access_token=${access_token}`;

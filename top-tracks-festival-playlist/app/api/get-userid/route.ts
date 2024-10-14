@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
   } catch (error: unknown) {
     if (error instanceof Error) {
       return NextResponse.json(
-        { error: "Failed to fetch artist data", details: error.message },
+        { error: "Failed to fetch user data", details: error.message },
         { status: 500 }
       );
     }

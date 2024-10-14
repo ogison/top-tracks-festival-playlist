@@ -28,6 +28,7 @@ export async function GET(req: NextRequest) {
       }
     );
 
+    // 人気曲の上位10曲を返す
     const topTracks = response.data.tracks.slice(0, 10);
     return NextResponse.json({ topTracks: topTracks }, { status: 200 });
   } catch (error: unknown) {
