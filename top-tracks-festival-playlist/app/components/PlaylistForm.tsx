@@ -105,19 +105,20 @@ const PlaylistFormContent: React.FC<PlaylistFormProps> = ({
         <form
           ref={formRef}
           onSubmit={form.handleSubmit(handleMakePlaylist)}
-          className="flex space-x-2 mb-4"
+          className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-2 mb-4"
         >
           <FormField
             control={form.control}
             name="playlistName"
             render={({ field }) => (
               <FormItem>
-                <div className="flex">
-                  <FormLabel className="flex w-48 items-center">
+                <div className="flex flex-col md:flex-row">
+                  <FormLabel className="flex w-full md:w-48 items-center mb-2 md:mb-0">
                     プレイリスト名：
                   </FormLabel>
                   <FormControl>
                     <Input
+                      className=" bg-black text-green-500 font-mono"
                       placeholder="プレイリスト名を入力してください"
                       {...field}
                     />
