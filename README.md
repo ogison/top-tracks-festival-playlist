@@ -7,7 +7,7 @@ SpotifyAPI を使用して、プレイリストを作成します。
 1. ログイン画面
 
    下記の画面から「MAKE YOUR PLAYLIST」ボタンを押下して、Spotify の権限確認の画面に遷移します。そこで権限の許可をしてください。
-   ![alt text](./top-tracks-festival-playlist/public/images/Login_image.png)
+   ![alt text](./top-tracks-festival-playlist/public/images/Login_Image.png)
 
 2. メイン画面
 
