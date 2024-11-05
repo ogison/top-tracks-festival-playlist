@@ -109,7 +109,7 @@ const ArtistForm: React.FC<ArtistFormProps> = ({
                         </div>
                       </DropdownMenuTrigger>
                       {artistSuggestions?.length > 0 && (
-                        <DropdownMenuContent className=" bg-black text-green-500 font-mon">
+                        <DropdownMenuContent className=" bg-black text-green-500 font-mon w-full">
                           <>
                             {artistSuggestions.map((artist) => (
                               <DropdownMenuItem
