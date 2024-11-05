@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
@@ -10,14 +9,6 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://playlister-x.vercel.app/"),
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <html lang="en">
-      <body>{children}</body>
-    </html>
-  );
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return <div>{children}</div>;
 }
