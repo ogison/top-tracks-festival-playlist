@@ -15,14 +15,15 @@ import { Button } from "@/components/ui/button";
 import { Artist, ArtistSearchForm, Track } from "../types";
 import { z } from "zod";
 import { useArtistSuggestions } from "../hooks/useArtistSuggestions ";
-import { useState } from "react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { useRef, useState } from "react";
 import { handleSelectArtist } from "../handlers/handleArtist";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 
 // バリデーションスキーマを定義
 const schema = z.object({
@@ -46,7 +47,9 @@ const ArtistForm: React.FC<ArtistFormProps> = ({
   setArtistSuggestions,
   artistSuggestions,
 }) => {
-  const [isHovered, setIsHovered] = useState(false);
+  const [isHovered, setIsHovered] = useState<boolean>(false);
+  const [isCommandOpen, setIsCommandOpen] = useState<boolean>(false);
+  const commandRef = useRef<HTMLDivElement>(null);
 
   // フォームのセットアップ
   const form = useForm<ArtistSearchForm>({
@@ -93,44 +96,57 @@ const ArtistForm: React.FC<ArtistFormProps> = ({
             name="artistName"
             render={({ field }) => (
               <FormItem>
-                <div className="flex">
-                  <FormControl>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger>
-                        <div className="flex flex-col md:flex-row">
-                          <FormLabel className="flex w-full md:w-48 items-center mb-2 md:mb-0">
-                            アーティスト名：
-                          </FormLabel>
-                          <Input
-                            className=" bg-black text-green-500 font-mono"
-                            placeholder="アーティスト名を入力してください"
-                            {...field}
-                          />
-                        </div>
-                      </DropdownMenuTrigger>
-                      {artistSuggestions?.length > 0 && (
-                        <DropdownMenuContent className=" bg-black text-green-500 font-mon w-full">
-                          <>
-                            {artistSuggestions.map((artist) => (
-                              <DropdownMenuItem
-                                key={artist.id}
-                                onClick={() =>
-                                  handleSelectArtist(
-                                    artist.name,
-                                    form,
-                                    setArtistSuggestions
-                                  )
-                                }
-                                style={{ cursor: "pointer", listStyle: "none" }}
-                              >
-                                {artist.name}
-                              </DropdownMenuItem>
-                            ))}
-                          </>
-                        </DropdownMenuContent>
-                      )}
-                    </DropdownMenu>
-                  </FormControl>
+                <div className="flex flex-col md:flex-row">
+                  <FormLabel className="flex w-full md:w-48 items-center mb-2 md:mb-0">
+                    アーティスト名：
+                  </FormLabel>
+                  <div className="relative w-full" ref={commandRef}>
+                    <FormControl>
+                      <Input
+                        placeholder="アーティスト名を入力してください"
+                        className="bg-black text-green-500 font-mono"
+                        {...field}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          setIsCommandOpen(e.target.value.length > 0);
+                        }}
+                        onFocus={() => {
+                          if (field.value.length > 0) {
+                            setIsCommandOpen(true);
+                          }
+                        }}
+                      />
+                    </FormControl>
+                    {isCommandOpen && (
+                      <div className="absolute z-10 mt-1 w-full bg-black border border-gray-700 rounded shadow-lg">
+                        <Command>
+                          <CommandList>
+                            {artistSuggestions.length > 0 ? (
+                              <CommandGroup>
+                                {artistSuggestions.map((artist) => (
+                                  <CommandItem
+                                    key={artist.id}
+                                    onSelect={() => {
+                                      handleSelectArtist(
+                                        artist.name,
+                                        form,
+                                        setArtistSuggestions
+                                      );
+                                      setIsCommandOpen(false);
+                                    }}
+                                  >
+                                    {artist.name}
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            ) : (
+                              <CommandEmpty>候補が見つかりません</CommandEmpty>
+                            )}
+                          </CommandList>
+                        </Command>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <FormMessage />
               </FormItem>
