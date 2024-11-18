@@ -30,6 +30,7 @@ export default function Home() {
 
   // ダイアログ表示を管理
   const [isErrorDialogOpen, setIsErrorDialogOpen] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   return (
     <div className="min-h-screen bg-black text-green-500 font-mono">
@@ -50,6 +51,7 @@ export default function Home() {
               <PlaylistForm
                 setIsErrorDialogOpen={setIsErrorDialogOpen}
                 topTracks={topTracks}
+                setErrorMessage={setErrorMessage}
               />
             </CardContent>
           </Card>
@@ -68,10 +70,8 @@ export default function Home() {
         <Dialog open={isErrorDialogOpen}>
           <DialogContent className="sm:max-w-[425px] bg-black text-green-500 font-mono">
             <DialogHeader>
-              <DialogTitle>認証エラー</DialogTitle>
-              <DialogDescription>
-                プレイリスト作成に失敗しました
-              </DialogDescription>
+              <DialogTitle>エラー</DialogTitle>
+              <DialogDescription>{errorMessage}</DialogDescription>
             </DialogHeader>
 
             <DialogFooter className="sm:justify-end">
