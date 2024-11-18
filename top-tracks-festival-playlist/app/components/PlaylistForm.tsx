@@ -36,6 +36,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { DialogDescription } from "@radix-ui/react-dialog";
+import { MAX_SONGS } from "../constants";
+import { MESSAGE } from "../constants/message";
 
 // バリデーションスキーマを定義
 const schema = z.object({
@@ -47,6 +49,7 @@ const schema = z.object({
 interface PlaylistFormProps {
   setIsErrorDialogOpen: (isErrorDialogOpen: boolean) => void;
   topTracks: Track[];
+  setErrorMessage: (errorMessage: string) => void;
 }
 
 const PlaylistForm = (props: PlaylistFormProps) => {
@@ -60,6 +63,7 @@ const PlaylistForm = (props: PlaylistFormProps) => {
 const PlaylistFormContent: React.FC<PlaylistFormProps> = ({
   setIsErrorDialogOpen,
   topTracks,
+  setErrorMessage,
 }) => {
   const searchParams = useSearchParams();
   const access_token = searchParams.get("access_token");
@@ -83,6 +87,13 @@ const PlaylistFormContent: React.FC<PlaylistFormProps> = ({
    * プレイリストを作成します
    */
   const handleMakePlaylist = async () => {
+    console.log(topTracks.length);
+    if (topTracks.length >= MAX_SONGS) {
+      setIsErrorDialogOpen(true);
+      setErrorMessage(MESSAGE.曲制限);
+      return;
+    }
+
     if (access_token) {
       const trackUris: string[] = [];
       topTracks.map((track) => {
@@ -95,6 +106,7 @@ const PlaylistFormContent: React.FC<PlaylistFormProps> = ({
         setIsSuccessDialogOpen(true);
       } catch {
         setIsErrorDialogOpen(true);
+        setErrorMessage(MESSAGE.認証エラー);
       }
     }
   };
