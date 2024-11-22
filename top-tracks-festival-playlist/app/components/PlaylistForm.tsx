@@ -23,7 +23,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { PlaylistSearchForm, Track } from "../types";
+import { PlaylistSearchForm } from "../types";
 import { z } from "zod";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useRef, useState } from "react";
@@ -38,6 +38,7 @@ import {
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { MAX_SONGS } from "../constants";
 import { MESSAGE } from "../constants/message";
+import { useAppContext } from "../context/AppContext";
 
 // バリデーションスキーマを定義
 const schema = z.object({
@@ -46,25 +47,16 @@ const schema = z.object({
     .min(1, { message: "プレイリスト名は1文字以上入れてください" }),
 });
 
-interface PlaylistFormProps {
-  setIsErrorDialogOpen: (isErrorDialogOpen: boolean) => void;
-  topTracks: Track[];
-  setErrorMessage: (errorMessage: string) => void;
-}
-
-const PlaylistForm = (props: PlaylistFormProps) => {
+const PlaylistForm = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <PlaylistFormContent {...props} />
+      <PlaylistFormContent />
     </Suspense>
   );
 };
 
-const PlaylistFormContent: React.FC<PlaylistFormProps> = ({
-  setIsErrorDialogOpen,
-  topTracks,
-  setErrorMessage,
-}) => {
+const PlaylistFormContent = () => {
+  const { setIsErrorDialogOpen, topTracks, setErrorMessage } = useAppContext();
   const searchParams = useSearchParams();
   const access_token = searchParams.get("access_token");
   const formRef = useRef<HTMLFormElement | null>(null);

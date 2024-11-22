@@ -18,18 +18,14 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Track } from "../types";
 import { Checkbox } from "@/components/ui/checkbox";
 import Image from "next/image";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useEffect, useState } from "react";
+import { useAppContext } from "../context/AppContext";
 
-interface TracksListProps {
-  topTracks: Track[];
-  setTopTracks: (topTracks: Track[]) => void;
-}
-
-const TracksList: React.FC<TracksListProps> = ({ topTracks, setTopTracks }) => {
+const TracksList = () => {
+  const { topTracks, setTopTracks } = useAppContext();
   const [isHoveringSelectAll, setIsHoveringSelectAll] =
     useState<boolean>(false);
   const [isHoveringDeselectAll, setIsHoveringDeselectAll] =
