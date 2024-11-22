@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { AppProvider } from "../context/AppContext";
 
 export const metadata: Metadata = {
   title: {
@@ -10,5 +11,9 @@ export const metadata: Metadata = {
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return <div>{children}</div>;
+  return (
+    <div>
+      <AppProvider>{children}</AppProvider>
+    </div>
+  );
 }

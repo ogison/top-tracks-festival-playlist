@@ -12,7 +12,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Artist, ArtistSearchForm, Track } from "../types";
+import { ArtistSearchForm, Track } from "../types";
 import { z } from "zod";
 import { useArtistSuggestions } from "../hooks/useArtistSuggestions ";
 import { useRef, useState } from "react";
@@ -24,6 +24,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import { useAppContext } from "../context/AppContext";
 
 // バリデーションスキーマを定義
 const schema = z.object({
@@ -32,21 +33,14 @@ const schema = z.object({
     .min(1, { message: "アーティスト名は1文字以上入れてください" }),
 });
 
-interface ArtistFormProps {
-  setLoading: (loading: boolean) => void;
-  setTopTracks: React.Dispatch<React.SetStateAction<Track[]>>;
-  setIsErrorDialogOpen: (isErrorDialogOpen: boolean) => void;
-  setArtistSuggestions: (artistSuggestions: Artist[]) => void;
-  artistSuggestions: Artist[];
-}
-
-const ArtistForm: React.FC<ArtistFormProps> = ({
-  setLoading,
-  setTopTracks,
-  setIsErrorDialogOpen,
-  setArtistSuggestions,
-  artistSuggestions,
-}) => {
+const ArtistForm = () => {
+  const {
+    setLoading,
+    setTopTracks,
+    setIsErrorDialogOpen,
+    setArtistSuggestions,
+    artistSuggestions,
+  } = useAppContext();
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const [isCommandOpen, setIsCommandOpen] = useState<boolean>(false);
   const commandRef = useRef<HTMLDivElement>(null);
