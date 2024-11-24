@@ -16,15 +16,8 @@ import { ArtistSearchForm, Track } from "../types";
 import { z } from "zod";
 import { useArtistSuggestions } from "../hooks/useArtistSuggestions ";
 import { useRef, useState } from "react";
-import { handleSelectArtist } from "../handlers/handleArtist";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
 import { useAppContext } from "../context/AppContext";
+import ArtistSuggestionsCommand from "./ArtistSuggestionsCommand";
 
 // バリデーションスキーマを定義
 const schema = z.object({
@@ -39,7 +32,6 @@ const ArtistForm = () => {
     setTopTracks,
     setIsErrorDialogOpen,
     setArtistSuggestions,
-    artistSuggestions,
   } = useAppContext();
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const [isCommandOpen, setIsCommandOpen] = useState<boolean>(false);
@@ -112,33 +104,12 @@ const ArtistForm = () => {
                       />
                     </FormControl>
                     {isCommandOpen && (
-                      <div className="absolute z-10 mt-1 w-full bg-black border border-gray-700 rounded shadow-lg">
-                        <Command>
-                          <CommandList>
-                            {artistSuggestions.length > 0 ? (
-                              <CommandGroup>
-                                {artistSuggestions.map((artist) => (
-                                  <CommandItem
-                                    key={artist.id}
-                                    onSelect={() => {
-                                      handleSelectArtist(
-                                        artist.name,
-                                        form,
-                                        setArtistSuggestions
-                                      );
-                                      setIsCommandOpen(false);
-                                    }}
-                                  >
-                                    {artist.name}
-                                  </CommandItem>
-                                ))}
-                              </CommandGroup>
-                            ) : (
-                              <CommandEmpty>候補が見つかりません</CommandEmpty>
-                            )}
-                          </CommandList>
-                        </Command>
-                      </div>
+                      <>
+                        <ArtistSuggestionsCommand
+                          form={form}
+                          setIsCommandOpen={setIsCommandOpen}
+                        />
+                      </>
                     )}
                   </div>
                 </div>

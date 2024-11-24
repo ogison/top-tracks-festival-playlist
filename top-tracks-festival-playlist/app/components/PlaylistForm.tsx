@@ -7,38 +7,19 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { makePlaylist } from "../lib/spotify";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
-import { Button, buttonVariants } from "@/components/ui/button";
 import { PlaylistSearchForm } from "../types";
 import { z } from "zod";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useRef, useState } from "react";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { DialogDescription } from "@radix-ui/react-dialog";
 import { MAX_SONGS } from "../constants";
 import { MESSAGE } from "../constants/message";
 import { useAppContext } from "../context/AppContext";
+import ConfirmDialog from "./Dialog/ConfirmDialog";
+import SuccessDialog from "./Dialog/SuccessDialog";
 
 // バリデーションスキーマを定義
 const schema = z.object({
@@ -61,10 +42,9 @@ const PlaylistFormContent = () => {
   const access_token = searchParams.get("access_token");
   const formRef = useRef<HTMLFormElement | null>(null);
 
-  const [isHovered, setIsHovered] = useState(false);
-
   // プレイリスト作成後の成功ダイアログを管理
-  const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
+  const [isSuccessDialogOpen, setIsSuccessDialogOpen] =
+    useState<boolean>(false);
 
   // フォームのセットアップ
   const form = useForm<PlaylistSearchForm>({
@@ -132,67 +112,13 @@ const PlaylistFormContent = () => {
               </FormItem>
             )}
           />
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button
-                type="button"
-                className={`border border-input bg-background shadow-sm ${
-                  isHovered ? "bg-green-400 text-black" : "bg-black"
-                } hover:bg-green-400 transition-colors duration-300 pixel-font`}
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-              >
-                プレイリスト作成
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent className="bg-black text-green-500 font-mono">
-              <AlertDialogHeader>
-                <AlertDialogTitle>プレイリストを作成しますか?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  続行してもよろしいですか？
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>キャンセル</AlertDialogCancel>
-                <AlertDialogAction
-                  type="button"
-                  className={buttonVariants({ variant: "outline" })}
-                  onClick={() => {
-                    form.handleSubmit(handleMakePlaylist)();
-                  }}
-                >
-                  はい
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <ConfirmDialog form={form} handleMakePlaylist={handleMakePlaylist} />
         </form>
       </Form>
-      <Dialog
-        open={isSuccessDialogOpen}
-        onOpenChange={() => setIsSuccessDialogOpen(false)}
-      >
-        <DialogContent className="sm:max-w-md bg-black text-green-500 font-mono">
-          <DialogHeader>
-            <DialogTitle>プレイリスト作成成功</DialogTitle>
-            <DialogDescription>
-              プレイリストの作成に成功しました！
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="sm:justify-start">
-            <DialogClose asChild>
-              <Button
-                type="button"
-                variant="secondary"
-                className={buttonVariants({ variant: "outline" })}
-                onClick={() => setIsSuccessDialogOpen(false)}
-              >
-                閉じる
-              </Button>
-            </DialogClose>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <SuccessDialog
+        isSuccessDialogOpen={isSuccessDialogOpen}
+        setIsSuccessDialogOpen={setIsSuccessDialogOpen}
+      />
     </>
   );
 };
