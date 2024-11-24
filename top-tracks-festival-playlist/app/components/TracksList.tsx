@@ -7,31 +7,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import Image from "next/image";
-import { Button, buttonVariants } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { useAppContext } from "../context/AppContext";
+import DeleteConfirmDialog from "./Dialog/DeleteConfirmDialog";
+import CustomButton from "@/components/custom-button";
 
 const TracksList = () => {
   const { topTracks, setTopTracks } = useAppContext();
-  const [isHoveringSelectAll, setIsHoveringSelectAll] =
-    useState<boolean>(false);
-  const [isHoveringDeselectAll, setIsHoveringDeselectAll] =
-    useState<boolean>(false);
-  const [isHoveringDeleteAll, setIsHoveringDeleteAll] =
-    useState<boolean>(false);
 
   // チェックがついている曲の個数
   const [songCount, setSongCount] = useState<number>(0);
@@ -85,64 +70,9 @@ const TracksList = () => {
           </CardHeader>
           <CardContent>
             <div className="flex justify-end mb-4">
-              <Button
-                type="button"
-                className={`border border-input bg-background shadow-sm ${
-                  isHoveringSelectAll ? "bg-green-400 text-black" : "bg-black"
-                } hover:bg-green-400 transition-colors duration-300 pixel-font`}
-                onClick={handleSelectAll}
-                onMouseEnter={() => setIsHoveringSelectAll(true)}
-                onMouseLeave={() => setIsHoveringSelectAll(false)}
-              >
-                全選択
-              </Button>
-              <Button
-                type="button"
-                className={`border border-input bg-background ml-2 shadow-sm ${
-                  isHoveringDeselectAll ? "bg-green-400 text-black" : "bg-black"
-                } hover:bg-green-400 transition-colors duration-300 pixel-font`}
-                variant="secondary"
-                onClick={handleDeSelectAll}
-                onMouseEnter={() => setIsHoveringDeselectAll(true)}
-                onMouseLeave={() => setIsHoveringDeselectAll(false)}
-              >
-                全解除
-              </Button>
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button
-                    type="button"
-                    className={`border border-input bg-background ml-2 shadow-sm ${
-                      isHoveringDeleteAll
-                        ? "bg-green-400 text-black"
-                        : "bg-black"
-                    } hover:bg-green-400 transition-colors duration-300 pixel-font`}
-                    onMouseEnter={() => setIsHoveringDeleteAll(true)}
-                    onMouseLeave={() => setIsHoveringDeleteAll(false)}
-                  >
-                    全削除
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent className="bg-black text-green-500 font-mono">
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      本当に曲リストの中の曲をすべて削除してもよろしいですか？
-                    </AlertDialogTitle>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>キャンセル</AlertDialogCancel>
-                    <AlertDialogAction
-                      type="button"
-                      className={buttonVariants({ variant: "outline" })}
-                      onClick={() => {
-                        setTopTracks([]);
-                      }}
-                    >
-                      はい
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+              <CustomButton handleAction={handleSelectAll} name="全選択" />
+              <CustomButton handleAction={handleDeSelectAll} name="全解除" />
+              <DeleteConfirmDialog />
             </div>
 
             <div className="text-right underline">全{songCount}件</div>
@@ -179,7 +109,7 @@ const TracksList = () => {
                             width={Number(song?.album.images[0].width)}
                             height={Number(song?.album.images[0].height)}
                             alt={`${song.name} album art`}
-                            className="w-[50px] h-[50px] object-cover" // Adjust the size and styling of the image
+                            className="w-[50px] h-[50px] object-cover"
                           />
                         </a>
                       ) : (

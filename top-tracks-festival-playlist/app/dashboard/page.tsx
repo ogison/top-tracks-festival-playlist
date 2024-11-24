@@ -5,7 +5,7 @@ import ArtistForm from "../components/ArtistForm";
 import PlaylistForm from "../components/PlaylistForm";
 import TracksList from "../components/TracksList";
 import SpotifyLogo from "../components/SpotifyLogo";
-import ErrorDialog from "../components/ErrorDialog";
+import ErrorDialog from "../components/Dialog/ErrorDialog";
 import { useAppContext } from "../context/AppContext";
 
 export default function Home() {
