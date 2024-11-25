@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { ArtistSearchForm, Track } from "../types";
 import { z } from "zod";
 import { useArtistSuggestions } from "../hooks/useArtistSuggestions ";
-import { useRef, useState } from "react";
+import { Suspense, useRef, useState } from "react";
 import { useAppContext } from "../context/AppContext";
 import ArtistSuggestionsCommand from "./ArtistSuggestionsCommand";
 
@@ -27,6 +27,14 @@ const schema = z.object({
 });
 
 const ArtistForm = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ArtistFormContent />
+    </Suspense>
+  );
+};
+
+const ArtistFormContent = () => {
   const {
     setLoading,
     setTopTracks,
