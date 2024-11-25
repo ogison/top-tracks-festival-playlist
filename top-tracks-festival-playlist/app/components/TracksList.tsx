@@ -10,12 +10,20 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useAppContext } from "../context/AppContext";
 import DeleteConfirmDialog from "./Dialog/DeleteConfirmDialog";
 import CustomButton from "@/components/custom-button";
 
 const TracksList = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <TracksListContent />
+    </Suspense>
+  );
+};
+
+const TracksListContent = () => {
   const { topTracks, setTopTracks } = useAppContext();
 
   // チェックがついている曲の個数
